@@ -1,36 +1,54 @@
 from zaber_motion import Units, Library
 from zaber_motion.ascii import Connection
+from csv import reader
 
 Library.enable_device_db_store()
 
-with Connection.open_serial_port("COM3") as connection:
+maxspeedX = 50.0
+maxspeedY = 50.0
+maxspeedZ = 50.0
+
+with Connection.open_serial_port("COM8") as connection:
+    # establish serial connections
     device_list = connection.detect_devices()
     print("Found {} devices".format(len(device_list)))
 
-    device = device_list[0]
-    axis = device.get_axis(1)
-    axis.home()
+    # home all devices 
+    for device in device_list:
+        print("Homing all axes of device with address {}.".format(device.device_address))
+        device.all_axes.home()
+    
+    # initialize structures for devices and axis
+    deviceX = device_list[0]
+    deviceY = device_list[1]
+    deviceZ = device_list[2]
 
-    # test stuff
-    # Move to 10mm
-    axis.move_absolute(10, Units.LENGTH_MILLIMETRES)
+    axisX = deviceX.get_axis(1)
+    axisY = deviceY.get_axis(1)
+    axisZ = deviceZ.get_axis(1)
 
-    # Move an additional 20mm
-    axis.move_relative(20, Units.LENGTH_MILLIMETRES)
+    # set max velocity in each direction
+    deviceX.settings.set('maxspeed', maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+    deviceY.settings.set('maxspeed', maxspeedY, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+    deviceZ.settings.set('maxspeed', maxspeedZ, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+
+    # Function for moving in XYZ
+    def moveXYZ(Xval, Yval, Zval, unit):
+        axisX.move_absolute(Xval, unit, wait_until_idle=False)
+        axisY.move_absolute(Yval, unit, wait_until_idle=False)
+        axisZ.move_absolute(Zval, unit, wait_until_idle=False)
+
+        axisX.wait_until_idle()
+        axisY.wait_until_idle()
+        axisZ.wait_until_idle()
+    
+    # Reading from a CSV file and moving the gantry
+    with open('path.csv', 'r') as read_obj:
+        csv_reader = reader(read_obj)
+        header = next(csv_reader)
+        # Check file as empty
+        if header != None:
+            for row in csv_reader:
+                moveXYZ(float(row[0]), float(row[1]), float(row[2]), unit=Units.LENGTH_MILLIMETRES)
 
 
-    # start command stream
-    stream = device.get_stream(1)
-    stream.setup_live(1, 3)
-
-    #set maximum speed
-    stream.set_max_speed(0.5, Units.VELOCITY_CENTIMETRES_PER_SECOND)
-
-    # placeholder, this will come from a separate script
-    path_in_mm = [(0.00, 1.00, 0.00), (1.00, 1.00, 0.00), (2.00, 1.00, 0.00), (3.00, 1.00, 0.00), (4.00, 1.00, 0.00)]
-    for point in path_in_mm:
-        stream.line_absolute(
-            Measurement(point[0], Units.LENGTH_MILLIMETRES),
-            Measurement(point[1], Units.LENGTH_MILLIMETRES),
-            Measurement(point[2], Units.LENGTH_MILLIMETRES)
-        )
