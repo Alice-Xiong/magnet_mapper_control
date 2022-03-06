@@ -80,12 +80,15 @@ for i in range(num_points_xy):
             index += 1
     order = not(order)
 
-header = ['X', 'Y', 'Z', 'Rotation']
 
+# Write path to CSV file
+header = ['X', 'Y', 'Z', 'Rotation']
 with open('path.csv', 'w', encoding='UTF8', newline='') as f:
     f.truncate()
     writer = csv.writer(f)
     writer.writerow(header)
     writer.writerows(points)
     f.close()
+
+print('\n***************Path generation completed. ***************\n')
 
