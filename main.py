@@ -19,9 +19,9 @@ with Connection.open_serial_port("COM8") as connection:
         device.all_axes.home()
     
     # initialize structures for devices and axis
-    deviceX = device_list[0]
-    deviceY = device_list[1]
-    deviceZ = device_list[2]
+    deviceX = device_list[1] # parallel to magnet, horizontal, second stage
+    deviceY = device_list[2] # parallel to magnet, vertical, third stage
+    deviceZ = device_list[0] # orthogonal to magnet, first stage
 
     axisX = deviceX.get_axis(1)
     axisY = deviceY.get_axis(1)

@@ -13,10 +13,17 @@ to your serial port with Zaber devices.
 ### Windows
 
 ``` {.bash}
-# install the library
+# install the library (only needs to be done once)
 py -3 -m pip install --user zaber-motion
 
-# run example program
+# open command terminal in the directory where you loaded these files
+
+# check configuration before starting controller
+py -3 config_setter.py
+
+# You can also open the 'config.json' file to change configs directly
+
+# run main controller program
 py -3 main.py
 ```
 

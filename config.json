@@ -1,1 +1,1 @@
-{"test": {"radius": 50, "xy_spacing": 5, "x_offset": 50, "y_offset": 60, "depth": 60, "z_spacing": 10, "z_offset": 0}}
+{"test" : {"radius" : 20, "xy_spacing" : 5, "depth" : 40, "z_spacing" : 10, "x_offset" : 30, "y_offset" : 30, "z_offset" : 15}}
