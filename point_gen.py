@@ -1,11 +1,20 @@
 import numpy as np
 import csv
+import json
 
-cylinder = True
-radius = 50
-xy_spacing = 5
-depth = 100
-z_spacing = 10
+# Read configurations from 'config.json'
+with open('config.json', 'r') as json_file:
+	json_load = json.load(json_file)
+
+# Load configurations
+profile = 'test'
+radius = json_load[profile]['radius']
+xy_spacing = json_load[profile]['xy_spacing']
+x_offset = json_load[profile]['x_offset']
+y_offset = json_load[profile]['y_offset']
+depth = json_load[profile]['depth']
+z_spacing = json_load[profile]['z_spacing']
+z_offset = json_load[profile]['z_offset']
 
 # number of columns (= num of rows) under the given radius and spacing
 num_cols_half = int(radius/xy_spacing)
@@ -59,15 +68,15 @@ order = order_inc
 for i in range(num_points_xy):
     if order == order_inc:
         for j in range(0, num_z, 1):
-            points[index][0] = points_xy[i][0]
-            points[index][1] = points_xy[i][1]
-            points[index][2] = pos_z[j]
+            points[index][0] = points_xy[i][0] + x_offset
+            points[index][1] = points_xy[i][1] + y_offset
+            points[index][2] = pos_z[j] + z_offset
             index += 1
     if order == order_dec:
         for j in range(num_z-1, -1, -1):
-            points[index][0] = points_xy[i][0]
-            points[index][1] = points_xy[i][1]
-            points[index][2] = pos_z[j]
+            points[index][0] = points_xy[i][0] + x_offset
+            points[index][1] = points_xy[i][1] + y_offset
+            points[index][2] = pos_z[j] + z_offset
             index += 1
     order = not(order)
 
