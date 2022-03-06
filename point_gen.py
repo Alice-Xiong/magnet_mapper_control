@@ -90,5 +90,5 @@ with open('path.csv', 'w', encoding='UTF8', newline='') as f:
     writer.writerows(points)
     f.close()
 
-print('\n***************Path generation completed. ***************\n')
+print('\n*************** Path generation completed. ***************\n')
 

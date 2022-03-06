@@ -18,12 +18,7 @@ py -3 -m pip install --user zaber-motion
 
 # open command terminal in the directory where you loaded these files
 
-# check configuration before starting controller
-py -3 config_setter.py
-
-# You can also open the 'config.json' file to change configs directly
-
-# run main controller program
+# You can also open the 'config.json' file to change configs directly or run the command below to change settings.
 py -3 main.py
 ```
 

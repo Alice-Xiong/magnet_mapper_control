@@ -105,6 +105,7 @@ while True:
     inputStr = input('Ready to start mapper? True (T) for or False (F)? ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         import controller
+        break
     else:
         print('\n*************** Program cancelled by user. ***************\n')
         break
