@@ -9,16 +9,11 @@ class Points_Generator(Mapper):
         super().__init__()
         # Read configurations from 'config.json'
         self.config_filename = Mapper.config_filename
-        self.csv_filename = Mapper.csv_filename
         self.config_changed = Mapper.config_changed
         self.config_dict = Mapper.config_dict
 
-        if self.config_changed:
-            with open(self.config_filename, 'r') as json_file:
-                self.json_load = json.load(json_file)
-        
-    def generate(self):
         # Load configurations
+        self.path_filename = self.config_dict['path_filename']
         self.radius = self.config_dict['radius']
         self.xy_spacing = self.config_dict['xy_spacing']
         self.x_offset = self.config_dict['x_offset']
@@ -27,6 +22,8 @@ class Points_Generator(Mapper):
         self.z_spacing = self.config_dict['z_spacing']
         self.z_offset = self.config_dict['z_offset']
 
+        
+    def generate(self):
         # number of columns (= num of rows) under the given radius and spacing
         num_cols_half = int(self.radius/self.xy_spacing)
         num_cols = 2 * num_cols_half + 1
@@ -101,7 +98,7 @@ class Points_Generator(Mapper):
             self.generate()
             # Write path to CSV file
             header = ['X', 'Y', 'Z', 'Rotation']
-            with open(self.csv_filename, 'w', encoding='UTF8', newline='') as f:
+            with open(self.path_filename, 'w', encoding='UTF8', newline='') as f:
                 f.truncate()
                 writer = csv.writer(f)
                 writer.writerow(header)
