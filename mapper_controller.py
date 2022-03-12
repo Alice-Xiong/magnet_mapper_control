@@ -3,6 +3,7 @@ from zaber_motion import Units, Library
 from zaber_motion.ascii import Connection
 from csv import reader, writer
 from mapper_base import Mapper
+import serial
 
 class Controller (Mapper):
     def __init__(self): 
@@ -31,6 +32,15 @@ class Controller (Mapper):
             
 
     def run(self):
+        # configure the serial connections to the probe/Arduino
+        self.ser = serial.Serial(
+            port=self.comm_port_probe,
+            baudrate=9600,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS
+        )
+
         # Reading from a CSV file and moving the gantry
         # Initialize all stages
         Library.enable_device_db_store()
@@ -87,7 +97,7 @@ class Controller (Mapper):
 
     
     def log_data(self, csv_writer, x, y, z, rot):
-        field = "0.1G" # change this to real time probe reading
+        field = self.ser.readline().strip() # probe reading
         data = [x, y, z, rot, field]
         csv_writer.writerow(data)
 
