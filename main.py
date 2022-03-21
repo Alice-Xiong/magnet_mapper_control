@@ -22,10 +22,18 @@ while True:
         print('\n*************** Program cancelled by user. ***************\n')
         break
 
+    # Home stages before magnets turn on
+    inputStr = input('Ready to home mapper? True (T) for or False (F)? ')
+    if inputStr [0] == 'T' or inputStr [0] == 't':
+        controller = Controller()
+        controller.home()
+    else:
+        print('\n*************** Program cancelled by user. ***************\n')
+        break
+
     # Run main controller
     inputStr = input('Ready to start mapper? True (T) for or False (F)? ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
-        controller = Controller()
         controller.run()
         break
     else:

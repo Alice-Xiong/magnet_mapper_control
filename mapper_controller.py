@@ -1,6 +1,8 @@
 from time import sleep
 from zaber_motion import Units, Library
 from zaber_motion.ascii import Connection
+from zaber_motion import SetDeviceStateExceptionData
+from zaber_motion.ascii import SettingConstants
 from csv import reader, writer
 from mapper_base import Mapper
 import serial
@@ -14,10 +16,13 @@ class Controller (Mapper):
         self.comm_port_zaber = self.config_dict['comm_port_zaber']
         self.comm_port_probe = self.config_dict['comm_port_probe']
 
+        # xyz stage settings
         self.probe_stop_time = self.config_dict['probe_stop_time_sec']
         self.maxspeedX = self.config_dict['x_maxspeed']
         self.maxspeedY = self.config_dict['y_maxspeed']
         self.maxspeedZ = self.config_dict['z_maxspeed']
+
+        # rotation
        
         
     # Function for moving in XYZ
@@ -29,9 +34,7 @@ class Controller (Mapper):
         self.axisX.wait_until_idle()
         self.axisY.wait_until_idle()
         self.axisZ.wait_until_idle()
-            
 
-    def run(self):
         # configure the serial connections to the probe/Arduino
         self.ser = serial.Serial(
             port=self.comm_port_probe,
@@ -41,6 +44,23 @@ class Controller (Mapper):
             bytesize=serial.EIGHTBITS
         )
 
+
+
+    def home(self):
+        Library.enable_device_db_store()
+        with Connection.open_serial_port(self.comm_port_zaber) as connection:
+            # establish serial connections
+            device_list = connection.detect_devices()
+            print("Found {} devices".format(len(device_list)))
+
+            # home all devices 
+            for device in device_list:
+                print("Homing all axes of device with address {}.".format(device.device_address))
+                device.all_axes.home()
+            
+
+
+    def run(self):
         # Reading from a CSV file and moving the gantry
         # Initialize all stages
         Library.enable_device_db_store()
@@ -53,13 +73,12 @@ class Controller (Mapper):
             # home all devices 
             for device in device_list:
                 print("Homing all axes of device with address {}.".format(device.device_address))
-                device.all_axes.home()
             
            # TODO：Add this order to configs
             # initialize structures for devices and axis
-            deviceX = device_list[1] # parallel to magnet, horizontal, second stage
-            deviceY = device_list[2] # parallel to magnet, vertical, third stage
-            deviceZ = device_list[0] # orthogonal to magnet, first stage
+            deviceX = device_list[0] # orthogonal to magnet, first stage
+            deviceY = device_list[1] # parallel to magnet, horizontal, second stage
+            deviceZ = device_list[2] # parallel to magnet, vertical, third stage
 
             self.axisX = deviceX.get_axis(1)
             self.axisY = deviceY.get_axis(1)
