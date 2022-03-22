@@ -22,6 +22,7 @@ class Points_Generator(Mapper):
         self.y_offset = self.config_dict['y_offset']
         self.z_offset = self.config_dict['z_offset']
         self.probe_stop_time_sec = self.config_dict['probe_stop_time_sec']
+        self.rotation_angles = self.config_dict['rotation_points']
 
         
     def generate(self):
@@ -70,24 +71,28 @@ class Points_Generator(Mapper):
         num_x = int(self.depth/self.x_spacing) + 1
         pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
 
-        # z direction points
-        self.points = np.zeros([num_points_yz * num_x, 3])
+        # z direction and angular points
+        num_angles = len(self.rotation_angles)
+        self.points = np.zeros([num_points_yz * num_x * num_angles, 4])
         index = 0
         order = order_inc
-        for i in range(num_points_yz):
-            if order == order_inc:
-                for j in range(0, num_x, 1):
-                    self.points[index][0] = pos_x[j] + self.x_offset
-                    self.points[index][1] = points_yz[i][0] + self.y_offset
-                    self.points[index][2] = points_yz[i][1] + self.z_offset
-                    index += 1
-            if order == order_dec:
-                for j in range(num_x-1, -1, -1):
-                    self.points[index][0] = pos_x[j] + self.x_offset
-                    self.points[index][1] = points_yz[i][0] + self.y_offset
-                    self.points[index][2] = points_yz[i][1] + self.z_offset
-                    index += 1
-            order = not(order)
+        for angle in self.rotation_angles:
+            for i in range(num_points_yz):
+                if order == order_inc:
+                    for j in range(0, num_x, 1):
+                        self.points[index][0] = pos_x[j] + self.x_offset
+                        self.points[index][1] = points_yz[i][0] + self.y_offset
+                        self.points[index][2] = points_yz[i][1] + self.z_offset
+                        self.points[index][3] = angle
+                        index += 1
+                if order == order_dec:
+                    for j in range(num_x-1, -1, -1):
+                        self.points[index][0] = pos_x[j] + self.x_offset
+                        self.points[index][1] = points_yz[i][0] + self.y_offset
+                        self.points[index][2] = points_yz[i][1] + self.z_offset
+                        self.points[index][3] = angle
+                        index += 1
+                order = not(order)
 
 
     def estimate_time(self):

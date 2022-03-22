@@ -75,7 +75,7 @@ class Config_Setter(Mapper):
                 elif type(itemValue) is float:
                     inputStr = input('Enter a new floating point value for %s, currently %s: ' %(itemKey, str(itemValue)))
                     updatDict = {itemKey: float(inputStr)}
-                elif type(itemValue) is tuple or itemValue is list:
+                elif type(itemValue) is list:
                     outputList = []
                     if type(itemValue [0]) is str:
                         inputStr = input('Enter a new comma separated list of strings for %s, currently %s: ' %(itemKey, str(itemValue)))
@@ -128,5 +128,5 @@ class Config_Setter(Mapper):
     def update_json(self, filename):
         # Load the items from config_dict back into json file
         with open(filename, 'w') as fp:
-            fp.write(json.dumps(self.json_load, separators =(', ', ' : '), sort_keys=False, skipkeys = True))
+            fp.write(json.dumps(self.json_load, separators =(', \n', ' : '), sort_keys=False, skipkeys = True))
             fp.close()

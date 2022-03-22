@@ -41,15 +41,16 @@ class Controller (Mapper):
        
         
     # Function for moving in XYZ
-    def moveXYZ(self, Xval, Yval, Zval, unit):
-        self.axisX.move_absolute(Xval, unit, wait_until_idle=False)
-        self.axisY.move_absolute(Yval, unit, wait_until_idle=False)
-        self.axisZ.move_absolute(Zval, unit, wait_until_idle=False)
+    def moveXYZR(self, Xval, Yval, Zval, angle, unitXYZ, unitR):
+        self.axisX.move_absolute(Xval, unitXYZ, wait_until_idle=False)
+        self.axisY.move_absolute(Yval, unitXYZ, wait_until_idle=False)
+        self.axisZ.move_absolute(Zval, unitXYZ, wait_until_idle=False)
+        self.axisR.move_absolute(angle, unitR, wait_until_idle = False)
 
         self.axisX.wait_until_idle()
         self.axisY.wait_until_idle()
         self.axisZ.wait_until_idle()
-
+        self.axisR.wait_until_idle()
 
     def home(self):
         Library.enable_device_db_store()
@@ -79,10 +80,12 @@ class Controller (Mapper):
             deviceX = device_list[0] # orthogonal to magnet, first stage
             deviceY = device_list[1] # parallel to magnet, horizontal, second stage
             deviceZ = device_list[2] # parallel to magnet, vertical, third stage
+            deviceR = device_list[3] # last rotation stage
 
             self.axisX = deviceX.get_axis(1)
             self.axisY = deviceY.get_axis(1)
             self.axisZ = deviceZ.get_axis(1)
+            self.axisR = deviceR.get_axis(1)
 
             # set max velocity in each direction
             deviceX.settings.set('maxspeed', self.maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
@@ -106,11 +109,11 @@ class Controller (Mapper):
                         if header != None:
                             for row in csv_reader:
                                 # move the mapper to position
-                                self.moveXYZ(float(row[0]), float(row[1]), float(row[2]), unit=Units.LENGTH_MILLIMETRES)
+                                self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                                 # Wait for oscillation to damp out
                                 sleep(self.probe_stop_time)
                                 # Write data into new csv file
-                                self.log_data(csv_writer, float(row[0]), float(row[1]), float(row[2]), 0)
+                                self.log_data(csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]), 0)
                         
                         # close and save the data
                         write_obj.close()
@@ -121,7 +124,7 @@ class Controller (Mapper):
                     if header != None:
                         for row in csv_reader:
                             # move the mapper to position
-                            self.moveXYZ(float(row[0]), float(row[1]), float(row[2]), unit=Units.LENGTH_MILLIMETRES)
+                            self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                             # Wait for oscillation to damp out
                             sleep(self.probe_stop_time)
         

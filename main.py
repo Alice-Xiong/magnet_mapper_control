@@ -30,18 +30,19 @@ while True:
     # TODO: check coordinate system is fixed -- DONE
     # TODO: add timing estimate -- DONE
     # TODO: add case to not collect data (no probe) -- DONE
-    # TODO: check rotation stage works
-    # TODO: add current limit to every stage
+    # TODO: write rotation code -- DONE
+    # TODO: add position and current limit to every stage -- DONE
     # TODO: add case to explore bounds before running the mapper
     # TODO: write calibration (rectangular coordinates code)
-    # TODO: add case to not collect data (no probe)
 
 
     # Home stages before magnets turn on
-    inputStr = input('\nReady to home mapper? True (T) to start mapper, Quit (Q) to exit the program, and press any key to go back to settings.? ')
+    inputStr = input('\nReady to home mapper? True (T) to start mapper, Skip(S) to skip homing,  Quit (Q) to exit the program, or press any key to go back to settings. ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         controller = Controller()
         controller.home()
+    elif inputStr [0] == 'S' or inputStr [0] == 's':
+        controller = Controller()
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':
         print('\n*************** Program cancelled by user. ***************\n')
         break
@@ -49,7 +50,7 @@ while True:
         continue
 
     # Run main controller
-    inputStr = input('\nReady to start mapper? True (T) to start mapper, Quit (Q) to exit the program, and press any key to go back to settings.')
+    inputStr = input('\nReady to start mapper? True (T) to start mapper, Quit (Q) to exit the program, or press any key to go back to settings.')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         controller.run()
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':
