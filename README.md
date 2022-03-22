@@ -15,6 +15,7 @@ to your serial port with Zaber devices.
 ``` {.bash}
 # install the library (only needs to be done once)
 py -3 -m pip install --user zaber-motion
+py -3 -m pip install pySerial
 
 # open command terminal in the directory where you loaded these files
 

@@ -54,8 +54,8 @@ while True:
         controller.home()
     elif inputStr [0] == '2':
         points_generator.generate_edges()
-        controller = Controller()
-        controller.run_edges()
+        #controller = Controller()
+        #controller.run_edges()
         pass
     elif inputStr [0] == '3':
         controller = Controller()

@@ -37,11 +37,22 @@ class Points_Generator(Mapper):
 
 
     def generate_edges(self): 
+        # generate the points for edges
         self.points_edges = np.zeros([self.num_cols_Y * 4, 4])
         j = 0
-        for i in len(self.points):
-            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==self.num_cols-1) or (self.points[i][1] != self.points[i-1][1]):
+        for i in range(len(self.points)):
+            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==self.num_cols_Y-1) or (self.points[i][1] != self.points[i-1][1]):
                 self.points_edges[j] = self.points[i]
+                j += 1
+        
+        # store them into a CSV file
+        header = ['X', 'Y', 'Z', 'Rotation']
+        with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
+            f.truncate()
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(self.points_edges)
+            f.close()
 
         
     def generate(self):
@@ -92,6 +103,7 @@ class Points_Generator(Mapper):
             num_cols_half_Z = int(self.z_range/self.z_spacing/2)
             num_cols_Y = int(self.y_range/self.y_spacing) + 1
             num_cols_Z = int(self.z_range/self.z_spacing) + 1
+            self.num_cols_Y = num_cols_Y #save this for other function
 
             # possible positions of each column
             pos_Y = np.arange(-self.y_spacing * num_cols_half_Y, self.y_spacing * (num_cols_half_Y + 1), self.y_spacing)
