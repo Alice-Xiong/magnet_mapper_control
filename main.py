@@ -39,25 +39,30 @@ while True:
     # TODO: add case to explore bounds before running the mapper
 
 
+
+    # Main menu-ish thing
+    print('\n******************** Main Menu ********************\n')
+    print('1) Home the mapper')
+    print('2) Run mapper along edges of mapping path')
+    print('3) Start mapper in full mapping path')
+    print('\nPress Q to exit the program')
+
     # Home stages before magnets turn on
-    inputStr = input('\nReady to home mapper? True (T) to home mapper, Skip(S) to skip homing,  Quit (Q) to exit the program, or press any key to go back to settings. ')
-    if inputStr [0] == 'T' or inputStr [0] == 't':
+    inputStr = input('\nEnter the number of operation you would like to perform: ')
+    if inputStr [0] == '1':
         controller = Controller()
         controller.home()
-    elif inputStr [0] == 'S' or inputStr [0] == 's':
+    elif inputStr [0] == '2':
+        points_generator.generate_edges()
         controller = Controller()
-    elif inputStr [0] == 'Q' or inputStr [0] == 'q':
-        print('\n*************** Program cancelled by user. ***************\n')
-        break
-    else:
-        continue
-
-    # Run main controller
-    inputStr = input('\nReady to start mapper? True (T) to start mapper, Quit (Q) to exit the program, or press any key to go back to settings. ')
-    if inputStr [0] == 'T' or inputStr [0] == 't':
+        controller.run_edges()
+        pass
+    elif inputStr [0] == '3':
+        controller = Controller()
         controller.run()
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':
         print('\n*************** Program cancelled by user. ***************\n')
         break
     else:
         continue
+

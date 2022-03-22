@@ -13,6 +13,7 @@ class Points_Generator(Mapper):
 
         # Load configurations
         self.path_filename = self.config_dict['path_filename']
+        self.path_edges_filename = self.config_dict['path_edges_filename']
         self.shape = self.config_dict['shape']
 
         # Configurations specific to cylinder and rectangle
@@ -34,6 +35,14 @@ class Points_Generator(Mapper):
         self.probe_stop_time_sec = self.config_dict['probe_stop_time_sec']
         self.rotation_angles = self.config_dict['rotation_points']
 
+
+    def generate_edges(self): 
+        self.points_edges = np.zeros([self.num_cols_Y * 4, 4])
+        j = 0
+        for i in len(self.points):
+            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==self.num_cols-1) or (self.points[i][1] != self.points[i-1][1]):
+                self.points_edges[j] = self.points[i]
+
         
     def generate(self):
         # Constants for order
@@ -44,20 +53,20 @@ class Points_Generator(Mapper):
         if self.shape == "cylinder":
             # number of columns (= num of rows) under the given radius and spacing
             num_cols_half = int(self.radius/self.yz_spacing)
-            num_cols = 2 * num_cols_half + 1
+            self.num_cols = 2 * num_cols_half + 1
 
             # possible positions of each column
             pos_yz = np.arange(-self.yz_spacing * num_cols_half, self.yz_spacing * (num_cols_half + 1), self.yz_spacing)
 
             # Fill all possible y, z values
-            points_yz = np.zeros([num_cols * num_cols, 2])
+            points_yz = np.zeros([self.num_cols * self.num_cols, 2])
 
             # Initialize variables for pathing
             index = 0
             order = order_inc
-            for i in range(num_cols):
+            for i in range(self.num_cols):
                 if order == order_inc:
-                    for j in range(0, num_cols, 1):
+                    for j in range(0, self.num_cols, 1):
                         y = pos_yz[i]
                         z = pos_yz[j]
                         # make sure points are within circle
@@ -66,7 +75,7 @@ class Points_Generator(Mapper):
                             points_yz[index][1] = z
                             index += 1
                 if order == order_dec:
-                    for j in range(num_cols-1, -1, -1):
+                    for j in range(self.num_cols-1, -1, -1):
                         y = pos_yz[i]
                         z = pos_yz[j]
                         if (z * z + y * y < self.radius * self.radius):

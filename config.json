@@ -1,4 +1,5 @@
 {"test_cylinder" : {"path_filename" : "path.csv", 
+"path_edges_filename" : "path1.csv", 
 "data_filename" : "data.csv", 
 "shape" : "cylinder", 
 "probe_stop_time_sec" : 2.0, 
@@ -18,6 +19,7 @@
 90], 
 "collect_data" : "False"}, 
 "test_rectangular" : {"path_filename" : "path.csv", 
+"path_edges_filename" : "path1.csv", 
 "data_filename" : "data.csv", 
 "shape" : "rectangular", 
 "probe_stop_time_sec" : 2.0, 

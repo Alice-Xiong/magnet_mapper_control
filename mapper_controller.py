@@ -12,6 +12,7 @@ class Controller (Mapper):
         super().__init__
         self.config_dict = Mapper.config_dict
         self.path_filename = self.config_dict['path_filename']
+        self.path_edges_filename = self.config_dict['path_edges_filename']
         self.data_filename = self.config_dict['data_filename']
         self.comm_port_zaber = self.config_dict['comm_port_zaber']
         self.comm_port_probe = self.config_dict['comm_port_probe']
@@ -76,6 +77,44 @@ class Controller (Mapper):
         field = self.ser.readline().strip() # probe reading
         data = [x, y, z, rot, field]
         csv_writer.writerow(data)
+
+
+    def run_edges(self):
+        Library.enable_device_db_store()
+
+        with Connection.open_serial_port(self.comm_port_zaber) as connection:
+            # establish serial connections
+            self.device_list = connection.detect_devices()
+            
+            # TODO：Add this order to configs
+            # initialize structures for devices and axis
+            deviceX = self.device_list[0] # orthogonal to magnet, first stage
+            deviceY = self.device_list[1] # parallel to magnet, horizontal, second stage
+            deviceZ = self.device_list[2] # parallel to magnet, vertical, third stage
+
+            self.axisX = deviceX.get_axis(1)
+            self.axisY = deviceY.get_axis(1)
+            self.axisZ = deviceZ.get_axis(1)
+
+            # set max velocity in each direction
+            deviceX.settings.set('maxspeed', self.maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            deviceY.settings.set('maxspeed', self.maxspeedY, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            deviceZ.settings.set('maxspeed', self.maxspeedZ, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+
+            # actually run the stages
+            with open(self.path_edges_filename, 'r') as read_obj:
+                csv_reader = reader(read_obj)
+                header = next(csv_reader)
+
+                # Check file is not empty
+                if header != None:
+                    for row in csv_reader:
+                        # move the mapper to position
+                        self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), 0, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
+                        self.check_warnings()
+                        # Wait for oscillation to damp out
+                        sleep(self.probe_stop_time)
+
             
 
     # Main function to be accessed outside
