@@ -48,6 +48,13 @@ class Config_Setter(Mapper):
 
             # Exit editting if 0 is entered
             if inputNum == 0:
+                # Check whether we are collecting data
+                if self.config_dict['collect_data'][0] == 'F' or self.config_dict['collect_data'][0] == 'f':
+                    inputStr = input('\nWarning! You are currently not collecting data. Are you sure you want to continue? True (T) or False (F). ')
+                    if inputStr [0] == 'T' or inputStr [0] == 't':
+                        self.update_json(self.config_filename)
+                    else:
+                        continue
                 break
             else:
                 # Set that json file is updated
@@ -98,6 +105,8 @@ class Config_Setter(Mapper):
                     else:
                         updatDict = {itemKey: False}
                 self.config_dict.update(updatDict)
+
+
 
         # Out of while true loop, ask user to save configuration to json file
         inputStr = input('\nDo you want to save these settings? T to save to original file, N to save to a new file, any other key to save nothing. ')

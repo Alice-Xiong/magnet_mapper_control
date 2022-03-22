@@ -16,11 +16,12 @@ class Points_Generator(Mapper):
         self.path_filename = self.config_dict['path_filename']
         self.radius = self.config_dict['radius']
         self.yz_spacing = self.config_dict['yz_spacing']
+        self.depth = self.config_dict['depth']
+        self.x_spacing = self.config_dict['x_spacing']
         self.x_offset = self.config_dict['x_offset']
         self.y_offset = self.config_dict['y_offset']
-        self.depth = self.config_dict['depth']
-        self.x_spacing = self.config_dict['z_spacing']
         self.z_offset = self.config_dict['z_offset']
+        self.probe_stop_time_sec = self.config_dict['probe_stop_time_sec']
 
         
     def generate(self):
@@ -50,8 +51,8 @@ class Points_Generator(Mapper):
                         index += 1
             if order == order_dec:
                 for j in range(num_cols-1, -1, -1):
-                    x = pos_yz[i]
-                    y = pos_yz[j]
+                    y = pos_yz[i]
+                    z = pos_yz[j]
                     if (z * z + y * y < self.radius * self.radius):
                         points_yz[index][0]= y
                         points_yz[index][1] = z
@@ -67,7 +68,7 @@ class Points_Generator(Mapper):
 
         # possible positions in x direction (going into magnet)
         num_x = int(self.depth/self.x_spacing) + 1
-        pos_x = np.arange(0, self.x_spacing * num_x, self.z_spacing)
+        pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
 
         # z direction points
         self.points = np.zeros([num_points_yz * num_x, 3])
@@ -89,6 +90,25 @@ class Points_Generator(Mapper):
             order = not(order)
 
 
+    def estimate_time(self):
+        # Prints the estimated time
+        with open(self.path_filename, 'r', encoding='UTF8', newline='') as f:
+            reader = csv.reader(f)
+
+            unit = 'seconds'
+            total_time = len(list(reader)) * (self.probe_stop_time_sec + 1)
+            if total_time >= 60:
+                total_time = total_time/60
+                unit = 'minutes'
+
+                if total_time >= 60:
+                    total_time = total_time/60
+                    unit = 'hours'
+
+            inputStr = input('The current mapping sequence will take approximately %d %s. \nDo you wish to continue? True (T) or Return to settings (any key)? ' % (total_time, unit))
+            return inputStr
+
+
     '''
     Functions to be accessed from outside 
     '''
@@ -104,6 +124,16 @@ class Points_Generator(Mapper):
                 writer.writerow(header)
                 writer.writerows(self.points)
                 f.close()
-
+        
+        
         print('\n*************** Path generation completed. ***************\n')
+
+        path_ready = self.estimate_time()
+        if  path_ready[0] == 'T' or path_ready[0] == 't':
+            return True
+        else:
+            return False
+            
+
+
 

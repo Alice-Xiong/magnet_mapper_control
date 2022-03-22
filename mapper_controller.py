@@ -23,6 +23,21 @@ class Controller (Mapper):
         self.maxspeedZ = self.config_dict['z_maxspeed']
 
         # rotation
+
+
+        # data collection
+        if self.config_dict['collect_data'][0] == 'F' or self.config_dict['collect_data'][0] == 'f':
+            self.collect_data = False
+        else:
+            self.collect_data = True
+            # configure the serial connections to the probe/Arduino
+            self.ser = serial.Serial(
+                port=self.comm_port_probe,
+                baudrate=9600,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS
+            )
        
         
     # Function for moving in XYZ
@@ -34,16 +49,6 @@ class Controller (Mapper):
         self.axisX.wait_until_idle()
         self.axisY.wait_until_idle()
         self.axisZ.wait_until_idle()
-
-        # configure the serial connections to the probe/Arduino
-        self.ser = serial.Serial(
-            port=self.comm_port_probe,
-            baudrate=9600,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS
-        )
-
 
 
     def home(self):
@@ -68,13 +73,8 @@ class Controller (Mapper):
         with Connection.open_serial_port(self.comm_port_zaber) as connection:
             # establish serial connections
             device_list = connection.detect_devices()
-            print("Found {} devices".format(len(device_list)))
-
-            # home all devices 
-            for device in device_list:
-                print("Homing all axes of device with address {}.".format(device.device_address))
             
-           # TODO：Add this order to configs
+            # TODO：Add this order to configs
             # initialize structures for devices and axis
             deviceX = device_list[0] # orthogonal to magnet, first stage
             deviceY = device_list[1] # parallel to magnet, horizontal, second stage
@@ -89,28 +89,43 @@ class Controller (Mapper):
             deviceY.settings.set('maxspeed', self.maxspeedY, Units.VELOCITY_MILLIMETRES_PER_SECOND)
             deviceZ.settings.set('maxspeed', self.maxspeedZ, Units.VELOCITY_MILLIMETRES_PER_SECOND)
 
-            # open the data csv and write the header
-            with open(self.data_filename, 'w') as write_obj:
-                csv_writer = writer(write_obj)
-                data = ['X', 'Y', 'Z', 'Rotation', 'Data']
-                csv_writer.writerow(data)
 
-                # actually run the stages
-                with open(self.path_filename, 'r') as read_obj:
-                    csv_reader = reader(read_obj)
-                    header = next(csv_reader)
+            # actually run the stages
+            with open(self.path_filename, 'r') as read_obj:
+                csv_reader = reader(read_obj)
+                header = next(csv_reader)
 
+                if self.collect_data:
+                    # open the data csv and write the header
+                    with open(self.data_filename, 'w') as write_obj:
+                        csv_writer = writer(write_obj)
+                        data = ['X', 'Y', 'Z', 'Rotation', 'Data']
+                        csv_writer.writerow(data)
+
+                        # Check file is not empty
+                        if header != None:
+                            for row in csv_reader:
+                                # move the mapper to position
+                                self.moveXYZ(float(row[0]), float(row[1]), float(row[2]), unit=Units.LENGTH_MILLIMETRES)
+                                # Wait for oscillation to damp out
+                                sleep(self.probe_stop_time)
+                                # Write data into new csv file
+                                self.log_data(csv_writer, float(row[0]), float(row[1]), float(row[2]), 0)
+                        
+                        # close and save the data
+                        write_obj.close()
+
+                # not saving data case
+                else:
                     # Check file is not empty
                     if header != None:
                         for row in csv_reader:
+                            # move the mapper to position
                             self.moveXYZ(float(row[0]), float(row[1]), float(row[2]), unit=Units.LENGTH_MILLIMETRES)
                             # Wait for oscillation to damp out
                             sleep(self.probe_stop_time)
-                            # Write data into new csv file
-                            self.log_data(csv_writer, float(row[0]), float(row[1]), float(row[2]), 0)
-            
-            # close and save the data
-            write_obj.close()
+        
+
 
         print('\n*************** Program finished ***************\n')
 
