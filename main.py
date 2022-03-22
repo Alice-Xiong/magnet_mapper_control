@@ -6,16 +6,19 @@ from mapper_config_setter import Config_Setter
 from mapper_points_generator import Points_Generator
 from mapper_controller import Controller
 
-mapper = Mapper()
-config_setter = Config_Setter()
-
 
 while True:
+    # Ask user to input json profile name
+    inputStr_config = input('Enter your config filename (.json will be automatically appeneded to your filename): ') + ".json"
+    inputStr_profile = input('Enter your profile name: ')
+    mapper = Mapper(inputStr_config, inputStr_profile)
+    config_setter = Config_Setter()
+
     # Ask user to change settings 
     config_setter.run()
 
     # Run the point generator to convert everything in json to path and write to CSV file
-    inputStr = input('\nSetting now updated. Ready to rewrite path CSV? True (T) to start mapper, Quit (Q) to exit the program, and press any key to go back to settings.?')
+    inputStr = input('\nSetting now updated. Ready to rewrite path CSV? True (T) to start CSV writing, Quit (Q) to exit the program, and press any key to go back to settings. ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         points_generator = Points_Generator()
         path_ready = points_generator.run()
@@ -31,13 +34,13 @@ while True:
     # TODO: add timing estimate -- DONE
     # TODO: add case to not collect data (no probe) -- DONE
     # TODO: write rotation code -- DONE
-    # TODO: add position and current limit to every stage -- DONE
+    # TODO: add position and current limit to every stage -- Kinda
+    # TODO: write calibration (rectangular coordinates code) -- DONE
     # TODO: add case to explore bounds before running the mapper
-    # TODO: write calibration (rectangular coordinates code)
 
 
     # Home stages before magnets turn on
-    inputStr = input('\nReady to home mapper? True (T) to start mapper, Skip(S) to skip homing,  Quit (Q) to exit the program, or press any key to go back to settings. ')
+    inputStr = input('\nReady to home mapper? True (T) to home mapper, Skip(S) to skip homing,  Quit (Q) to exit the program, or press any key to go back to settings. ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         controller = Controller()
         controller.home()
@@ -50,7 +53,7 @@ while True:
         continue
 
     # Run main controller
-    inputStr = input('\nReady to start mapper? True (T) to start mapper, Quit (Q) to exit the program, or press any key to go back to settings.')
+    inputStr = input('\nReady to start mapper? True (T) to start mapper, Quit (Q) to exit the program, or press any key to go back to settings. ')
     if inputStr [0] == 'T' or inputStr [0] == 't':
         controller.run()
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':

@@ -4,7 +4,6 @@ from mapper_base import Mapper
 class Config_Setter(Mapper):
 
     def __init__(self):
-        super().__init__()
         self.config_filename = Mapper.config_filename
         self.config_dict = Mapper.config_dict
         self.profile = Mapper.profile

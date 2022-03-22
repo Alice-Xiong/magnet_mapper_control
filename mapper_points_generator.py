@@ -6,7 +6,6 @@ from mapper_base import Mapper
 class Points_Generator(Mapper):
 
     def __init__(self):
-        super().__init__()
         # Read configurations from 'config.json'
         self.config_filename = Mapper.config_filename
         self.config_changed = Mapper.config_changed
@@ -14,9 +13,20 @@ class Points_Generator(Mapper):
 
         # Load configurations
         self.path_filename = self.config_dict['path_filename']
-        self.radius = self.config_dict['radius']
-        self.yz_spacing = self.config_dict['yz_spacing']
-        self.depth = self.config_dict['depth']
+        self.shape = self.config_dict['shape']
+
+        # Configurations specific to cylinder and rectangle
+        if self.shape == "cylinder":
+            self.radius = self.config_dict['radius']
+            self.yz_spacing = self.config_dict['yz_spacing']
+        elif self.shape == "rectangular":
+            self.y_range = self.config_dict['y_range']
+            self.y_spacing = self.config_dict['y_spacing']
+            self.z_range = self.config_dict['z_range']
+            self.z_spacing = self.config_dict['z_spacing']
+
+        # Configurations common to both shapes
+        self.x_range = self.config_dict['x_range']
         self.x_spacing = self.config_dict['x_spacing']
         self.x_offset = self.config_dict['x_offset']
         self.y_offset = self.config_dict['y_offset']
@@ -26,40 +36,77 @@ class Points_Generator(Mapper):
 
         
     def generate(self):
-        # number of columns (= num of rows) under the given radius and spacing
-        num_cols_half = int(self.radius/self.yz_spacing)
-        num_cols = 2 * num_cols_half + 1
-
-        # possible positions of each column
-        pos_yz = np.arange(-self.yz_spacing * num_cols_half, self.yz_spacing * (num_cols_half + 1), self.yz_spacing)
-
-        # Fill all possible x, y values
-        points_yz = np.zeros([num_cols * num_cols, 2])
-        index = 0
         # Constants for order
         order_inc = True
         order_dec = False
-        order = order_inc
-        for i in range(num_cols):
-            if order == order_inc:
-                for j in range(0, num_cols, 1):
-                    y = pos_yz[i]
-                    z = pos_yz[j]
-                    # make sure points are within circle
-                    if (z *  z+ y * y < self.radius * self.radius):
-                        points_yz[index][0] = y
-                        points_yz[index][1] = z
+
+        # Generate xy points in cylindrical coordinates
+        if self.shape == "cylinder":
+            # number of columns (= num of rows) under the given radius and spacing
+            num_cols_half = int(self.radius/self.yz_spacing)
+            num_cols = 2 * num_cols_half + 1
+
+            # possible positions of each column
+            pos_yz = np.arange(-self.yz_spacing * num_cols_half, self.yz_spacing * (num_cols_half + 1), self.yz_spacing)
+
+            # Fill all possible y, z values
+            points_yz = np.zeros([num_cols * num_cols, 2])
+
+            # Initialize variables for pathing
+            index = 0
+            order = order_inc
+            for i in range(num_cols):
+                if order == order_inc:
+                    for j in range(0, num_cols, 1):
+                        y = pos_yz[i]
+                        z = pos_yz[j]
+                        # make sure points are within circle
+                        if (z *  z+ y * y < self.radius * self.radius):
+                            points_yz[index][0] = y
+                            points_yz[index][1] = z
+                            index += 1
+                if order == order_dec:
+                    for j in range(num_cols-1, -1, -1):
+                        y = pos_yz[i]
+                        z = pos_yz[j]
+                        if (z * z + y * y < self.radius * self.radius):
+                            points_yz[index][0]= y
+                            points_yz[index][1] = z
+                            index += 1
+                # switch increasing/decreasing order for every pass
+                order = not(order)
+
+        # Generate xy points in rectangular coordinates
+        elif self.shape == "rectangular":
+            # number of columns (= num of rows) under the given radius and spacing
+            num_cols_half_Y = int(self.y_range/self.y_spacing/2)
+            num_cols_half_Z = int(self.z_range/self.z_spacing/2)
+            num_cols_Y = int(self.y_range/self.y_spacing) + 1
+            num_cols_Z = int(self.z_range/self.z_spacing) + 1
+
+            # possible positions of each column
+            pos_Y = np.arange(-self.y_spacing * num_cols_half_Y, self.y_spacing * (num_cols_half_Y + 1), self.y_spacing)
+            pos_Z = np.arange(-self.z_spacing * num_cols_half_Z, self.z_spacing * (num_cols_half_Z + 1), self.z_spacing)
+
+            # Fill all possible y, z values
+            points_yz = np.zeros([num_cols_Y * num_cols_Z, 2])
+
+            # Initialize variables for pathing
+            index = 0
+            order = order_inc
+            for i in range(num_cols_Y):
+                if order == order_inc:
+                    for j in range(0, num_cols_Z, 1):
+                        points_yz[index][0] = pos_Y[i]
+                        points_yz[index][1] = pos_Z[j]
                         index += 1
-            if order == order_dec:
-                for j in range(num_cols-1, -1, -1):
-                    y = pos_yz[i]
-                    z = pos_yz[j]
-                    if (z * z + y * y < self.radius * self.radius):
-                        points_yz[index][0]= y
-                        points_yz[index][1] = z
+                if order == order_dec:
+                    for j in range(num_cols_Z-1, -1, -1):
+                        points_yz[index][0] = pos_Y[i]
+                        points_yz[index][1] = pos_Z[j]
                         index += 1
-            # switch increasing/decreasing order for every pass
-            order = not(order)
+                # switch increasing/decreasing order for every pass
+                order = not(order)
 
         # trim all zeros and get valid point length
         points_yz_1D_trim = np.trim_zeros(points_yz.flatten(), trim = 'b')
@@ -68,7 +115,7 @@ class Points_Generator(Mapper):
 
 
         # possible positions in x direction (going into magnet)
-        num_x = int(self.depth/self.x_spacing) + 1
+        num_x = int(self.x_range/self.x_spacing)
         pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
 
         # z direction and angular points
