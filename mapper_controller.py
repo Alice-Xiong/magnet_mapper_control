@@ -28,14 +28,7 @@ class Controller (Mapper):
             self.collect_data = False
         else:
             self.collect_data = True
-            # configure the serial connections to the probe/Arduino
-            self.ser = serial.Serial(
-                port=self.comm_port_probe,
-                baudrate=9600,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                bytesize=serial.EIGHTBITS
-            )
+
        
     # Function to home the staegs
     def home(self):
@@ -123,6 +116,15 @@ class Controller (Mapper):
         # Reading from a CSV file and moving the gantry
         # Initialize all stages
         Library.enable_device_db_store()
+
+        # configure the serial connections to the probe/Arduino
+        self.ser = serial.Serial(
+            port=self.comm_port_probe,
+            baudrate=9600,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS
+        )
 
         with Connection.open_serial_port(self.comm_port_zaber) as connection:
             # establish serial connections

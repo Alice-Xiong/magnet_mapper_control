@@ -43,7 +43,7 @@ class Points_Generator(Mapper):
 
         elif (self.shape == "rectangular"):
             # generate the points for edges
-            self.points_edges = np.zeros([self.num_cols_Y * 4, 4])
+            self.points_edges = np.zeros([int(self.num_cols_Y * 4 / self.num_angles), 4])
 
         # start path generation
         j = 0
@@ -52,7 +52,7 @@ class Points_Generator(Mapper):
         self.xmax = self.x_range + self.x_offset
 
         # 2D edges path at minimum x position (out of magnet)
-        for i in range(int(len(self.points) / 2)):
+        for i in range(int(len(self.points) / self.num_angles)):
             if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
                 self.points_edges[j][0] = self.xmin
                 self.points_edges[j][1] = self.points[i][1]
@@ -60,7 +60,7 @@ class Points_Generator(Mapper):
                 j += 1
 
         # 2D edges path at maximum x position (into magnet)
-        for i in range(int(len(self.points) / 2)):
+        for i in range(int(len(self.points) / self.num_angles)):
             if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
                 self.points_edges[j][0] = self.xmax
                 self.points_edges[j][1] = self.points[i][1]
@@ -118,6 +118,7 @@ class Points_Generator(Mapper):
                             points_yz[index][0]= y
                             points_yz[index][1] = z
                             index += 1
+
                 # switch increasing/decreasing order for every pass
                 order = not(order)
 
@@ -164,8 +165,8 @@ class Points_Generator(Mapper):
         pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
 
         # z direction and angular points
-        num_angles = len(self.rotation_angles)
-        self.points = np.zeros([num_points_yz * num_x * num_angles, 4])
+        self.num_angles = len(self.rotation_angles)
+        self.points = np.zeros([num_points_yz * num_x * self.num_angles, 4])
         index = 0
         order = order_inc
         for angle in self.rotation_angles:

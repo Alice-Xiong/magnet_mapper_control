@@ -31,9 +31,6 @@ while True:
     inputStr = input('\nEnter the number of operation you would like to perform: ')
     if inputStr [0] == '0':
         # Ask user to input json profile name
-        inputStr_config = input('Enter your config filename (.json will be automatically appeneded to your filename): ') + ".json"
-        inputStr_profile = input('Enter your profile name: ')
-        mapper = Mapper(inputStr_config, inputStr_profile)
         config_setter = Config_Setter()
 
         # Ask user to change settings 
