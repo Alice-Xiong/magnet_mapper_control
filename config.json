@@ -19,7 +19,7 @@
 90], 
 "collect_data" : "False"}, 
 "test_rectangular" : {"path_filename" : "path.csv", 
-"path_edges_filename" : "path1.csv", 
+"path_edges_filename" : "path_edges.csv", 
 "data_filename" : "data.csv", 
 "shape" : "rectangular", 
 "probe_stop_time_sec" : 0.5, 

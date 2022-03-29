@@ -72,6 +72,7 @@ class Controller (Mapper):
             if len(warning_flags) > 0:
                 print("Device is stalling (or doing something bad)!")
 
+
     # Collect data from serial port and write one line into the Excel sheet
     def log_data(self, csv_writer, x, y, z, rot):
         field = self.ser.readline().strip() # probe reading

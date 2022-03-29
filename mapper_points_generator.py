@@ -37,13 +37,36 @@ class Points_Generator(Mapper):
 
 
     def generate_edges(self): 
-        # generate the points for edges
-        self.points_edges = np.zeros([self.num_cols_Y * 4, 4])
+        if self.shape == "cylinder":
+            # generate the points for edges
+            self.points_edges = np.zeros([self.num_cols * 4, 4])
+
+        elif (self.shape == "rectangular"):
+            # generate the points for edges
+            self.points_edges = np.zeros([self.num_cols_Y * 4, 4])
+
+        # start path generation
         j = 0
-        for i in range(len(self.points)):
-            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==self.num_cols_Y-1) or (self.points[i][1] != self.points[i-1][1]):
-                self.points_edges[j] = self.points[i]
+
+        self.xmin = self.x_offset
+        self.xmax = self.x_range + self.x_offset
+
+        # 2D edges path at minimum x position (out of magnet)
+        for i in range(int(len(self.points) / 2)):
+            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
+                self.points_edges[j][0] = self.xmin
+                self.points_edges[j][1] = self.points[i][1]
+                self.points_edges[j][2] = self.points[i][2]
                 j += 1
+
+        # 2D edges path at maximum x position (into magnet)
+        for i in range(int(len(self.points) / 2)):
+            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
+                self.points_edges[j][0] = self.xmax
+                self.points_edges[j][1] = self.points[i][1]
+                self.points_edges[j][2] = self.points[i][2]
+                j += 1
+
         
         # store them into a CSV file
         header = ['X', 'Y', 'Z', 'Rotation']
@@ -53,6 +76,8 @@ class Points_Generator(Mapper):
             writer.writerow(header)
             writer.writerows(self.points_edges)
             f.close()
+
+        print('\n*************** Path for moving around edges generated ************\n')
 
         
     def generate(self):
@@ -134,7 +159,6 @@ class Points_Generator(Mapper):
         points_yz = np.reshape(points_yz_1D_trim, (-1, 2))
         num_points_yz = len(points_yz)
 
-
         # possible positions in x direction (going into magnet)
         num_x = int(self.x_range/self.x_spacing)
         pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
@@ -178,9 +202,7 @@ class Points_Generator(Mapper):
                     total_time = total_time/60
                     unit = 'hours'
 
-            inputStr = input('The current mapping sequence will take approximately %d %s. \nDo you wish to continue? True (T) or Return to settings (any key)? ' % (total_time, unit))
-            return inputStr
-
+            print('The current mapping sequence will take approximately %d %s. \n' % (total_time, unit))
 
     '''
     Functions to be accessed from outside 
@@ -197,15 +219,9 @@ class Points_Generator(Mapper):
                 writer.writerow(header)
                 writer.writerows(self.points)
                 f.close()
-        
-        
         print('\n*************** Path generation completed. ***************\n')
 
-        path_ready = self.estimate_time()
-        if  path_ready[0] == 'T' or path_ready[0] == 't':
-            return True
-        else:
-            return False
+        self.estimate_time()
             
 
 
