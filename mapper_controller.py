@@ -1,4 +1,5 @@
 from time import sleep
+from rx import throw
 from zaber_motion import Units, Library
 from zaber_motion.ascii import Connection
 from zaber_motion.ascii import WarningFlags
@@ -19,9 +20,9 @@ class Controller (Mapper):
 
         # xyz stage settings
         self.probe_stop_time = self.config_dict['probe_stop_time_sec']
-        self.maxspeedX = self.config_dict['x_maxspeed']
-        self.maxspeedY = self.config_dict['y_maxspeed']
-        self.maxspeedZ = self.config_dict['z_maxspeed']
+        self.max_accelX = self.config_dict['x_accel']
+        self.max_accelY = self.config_dict['y_accel']
+        self.max_accelZ = self.config_dict['z_accel']
 
         # data collection
         if self.config_dict['collect_data'][0] == 'F' or self.config_dict['collect_data'][0] == 'f':
@@ -63,15 +64,28 @@ class Controller (Mapper):
         for dev in self.device_list:
             warning_flags = dev.warnings.get_flags()
             if len(warning_flags) > 0:
-                print("Device is stalling (or doing something bad)!")
+                print(f"Device is stalling (or flag: {warning_flags})!")
 
 
     # Collect data from serial port and write one line into the Excel sheet
     def log_data(self, csv_writer, x, y, z, rot):
-        field = self.ser.readline().strip() # probe reading
-        data = [x, y, z, rot, field]
-        csv_writer.writerow(data)
+        # configure the serial connections to the probe/Arduino
+        with serial.Serial(self.comm_port_probe, 9600, timeout=None) as ser:
+            while (True):
+                try:
+                    field = ser.readline().decode('ascii') .strip() # probe reading
+                    field_val = field[:-1]
+                    field_unit = field[-1]
+                    data = [x, y, z, rot, field_val, field_unit]
+                    print(data)
 
+                    if (len(field_val) == 5 or len(field_val) == 6):
+                        csv_writer.writerow(data)
+                        ser.flush()
+                        break
+                except Exception as e:
+                    pass
+            
 
     def run_edges(self):
         Library.enable_device_db_store()
@@ -93,9 +107,9 @@ class Controller (Mapper):
             self.axisR = deviceR.get_axis(1)
 
             # set max velocity in each direction
-            deviceX.settings.set('maxspeed', self.maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-            deviceY.settings.set('maxspeed', self.maxspeedY, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-            deviceZ.settings.set('maxspeed', self.maxspeedZ, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            deviceX.settings.set('accel', self.max_accelX, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            deviceY.settings.set('accel', self.max_accelY, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            deviceZ.settings.set('accel', self.max_accelZ, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
 
             # actually run the stages
             with open(self.path_edges_filename, 'r') as read_obj:
@@ -119,15 +133,6 @@ class Controller (Mapper):
         # Initialize all stages
         Library.enable_device_db_store()
 
-        # configure the serial connections to the probe/Arduino
-        self.ser = serial.Serial(
-            port=self.comm_port_probe,
-            baudrate=9600,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS
-        )
-
         with Connection.open_serial_port(self.comm_port_zaber) as connection:
             # establish serial connections
             self.device_list = connection.detect_devices()
@@ -145,9 +150,9 @@ class Controller (Mapper):
             self.axisR = deviceR.get_axis(1)
 
             # set max velocity in each direction
-            deviceX.settings.set('maxspeed', self.maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-            deviceY.settings.set('maxspeed', self.maxspeedY, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-            deviceZ.settings.set('maxspeed', self.maxspeedZ, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            deviceX.settings.set('accel', self.max_accelX, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            deviceY.settings.set('accel', self.max_accelY, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            deviceZ.settings.set('accel', self.max_accelZ, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
 
             # actually run the stages
             with open(self.path_filename, 'r') as read_obj:
@@ -158,7 +163,7 @@ class Controller (Mapper):
                     # open the data csv and write the header
                     with open(self.data_filename, 'w') as write_obj:
                         self.csv_writer = writer(write_obj)
-                        data = ['X', 'Y', 'Z', 'Rotation', 'Data']
+                        data = ['X', 'Y', 'Z', 'Rotation', 'Data', 'Unit']
                         self.csv_writer.writerow(data)
 
                         # Check file is not empty

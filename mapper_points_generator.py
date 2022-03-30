@@ -48,8 +48,8 @@ class Points_Generator(Mapper):
         # start path generation
         j = 0
 
-        self.xmin = self.x_offset
-        self.xmax = self.x_range + self.x_offset
+        self.xmin = self.x_offset - int(self.x_range/2)
+        self.xmax = self.x_offset + int(self.x_range/2)
 
         # 2D edges path at minimum x position (out of magnet)
         for i in range(int(len(self.points) / self.num_angles)):
@@ -125,15 +125,15 @@ class Points_Generator(Mapper):
         # Generate xy points in rectangular coordinates
         elif self.shape == "rectangular":
             # number of columns (= num of rows) under the given radius and spacing
-            num_cols_half_Y = int(self.y_range/self.y_spacing/2)
-            num_cols_half_Z = int(self.z_range/self.z_spacing/2)
+            num_cols_half_Y = int(self.y_range/self.y_spacing/2 + 1)
+            num_cols_half_Z = int(self.z_range/self.z_spacing/2 + 1)
             num_cols_Y = int(self.y_range/self.y_spacing) + 1
             num_cols_Z = int(self.z_range/self.z_spacing) + 1
             self.num_cols_Y = num_cols_Y #save this for other function
 
             # possible positions of each column
-            pos_Y = np.arange(-self.y_spacing * num_cols_half_Y, self.y_spacing * (num_cols_half_Y + 1), self.y_spacing)
-            pos_Z = np.arange(-self.z_spacing * num_cols_half_Z, self.z_spacing * (num_cols_half_Z + 1), self.z_spacing)
+            pos_Y = np.arange(-self.y_spacing * (num_cols_half_Y - 1), self.y_spacing * (num_cols_half_Y + 1), self.y_spacing)
+            pos_Z = np.arange(-self.z_spacing * (num_cols_half_Z - 1), self.z_spacing * (num_cols_half_Z + 1), self.z_spacing)
 
             # Fill all possible y, z values
             points_yz = np.zeros([num_cols_Y * num_cols_Z, 2])
@@ -161,8 +161,9 @@ class Points_Generator(Mapper):
         num_points_yz = len(points_yz)
 
         # possible positions in x direction (going into magnet)
-        num_x = int(self.x_range/self.x_spacing)
-        pos_x = np.arange(0, self.x_spacing * num_x, self.x_spacing)
+        num_x = int(self.x_range/self.x_spacing) + 1
+        num_x_half = int(self.x_range/self.x_spacing/2) + 1
+        pos_x = np.arange(- self.x_spacing * (num_x_half - 1), self.x_spacing * (num_x_half + 1), self.x_spacing)
 
         # z direction and angular points
         self.num_angles = len(self.rotation_angles)

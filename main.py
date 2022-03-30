@@ -7,9 +7,9 @@ from mapper_points_generator import Points_Generator
 from mapper_controller import Controller
 
 # Ask user to input json profile name
-inputStr_config = input('Enter your config filename (.json will be automatically appeneded to your filename): ') + ".json"
-inputStr_profile = input('Enter your profile name: ')
-mapper = Mapper(inputStr_config, inputStr_profile)
+#inputStr_config = input('Enter your config filename (.json will be automatically appeneded to your filename): ') + ".json"
+#inputStr_profile = input('Enter your profile name: ')
+mapper = Mapper("config.json", "test_rectangular")
 
 # Initialize
 config_setter = Config_Setter()
@@ -17,7 +17,11 @@ points_generator = Points_Generator()
 controller = Controller()
 
 while True:
-    # TODO: add case to explore bounds before running the mapper
+    # TODO: set acceleration -- DONE
+    # TODO: fix b'' and add redundancy to measurements -- DONE
+    # TODO: add case to read arbitrary path 
+    # TODO: check for coordinates going out of bounds and correct
+    # TODO: stress test point generation, fix all weird variables
 
     # Main menu-ish thing
     print('\n******************** Main Menu ********************\n')
