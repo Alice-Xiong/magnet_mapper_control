@@ -85,10 +85,12 @@ class Controller (Mapper):
             deviceX = self.device_list[0] # orthogonal to magnet, first stage
             deviceY = self.device_list[1] # parallel to magnet, horizontal, second stage
             deviceZ = self.device_list[2] # parallel to magnet, vertical, third stage
+            deviceR = self.device_list[3] # last rotation stage
 
             self.axisX = deviceX.get_axis(1)
             self.axisY = deviceY.get_axis(1)
             self.axisZ = deviceZ.get_axis(1)
+            self.axisR = deviceR.get_axis(1)
 
             # set max velocity in each direction
             deviceX.settings.set('maxspeed', self.maxspeedX, Units.VELOCITY_MILLIMETRES_PER_SECOND)
@@ -169,9 +171,6 @@ class Controller (Mapper):
                                 sleep(self.probe_stop_time)
                                 # Write data into new csv file
                                 self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]))
-                        
-                        # close and save the data
-                        self.write_obj.close()
 
                 # not saving data case
                 else:
