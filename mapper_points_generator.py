@@ -29,9 +29,6 @@ class Points_Generator(Mapper):
         # Configurations common to both shapes
         self.x_range = self.config_dict['x_range']
         self.x_spacing = self.config_dict['x_spacing']
-        self.x_offset = self.config_dict['x_offset']
-        self.y_offset = self.config_dict['y_offset']
-        self.z_offset = self.config_dict['z_offset']
         self.probe_stop_time_sec = self.config_dict['probe_stop_time_sec']
         self.rotation_angles = self.config_dict['rotation_points']
 
@@ -174,16 +171,16 @@ class Points_Generator(Mapper):
             for i in range(num_points_yz):
                 if order == order_inc:
                     for j in range(0, num_x, 1):
-                        self.points[index][0] = pos_x[j] + self.x_offset
-                        self.points[index][1] = points_yz[i][0] + self.y_offset
-                        self.points[index][2] = points_yz[i][1] + self.z_offset
+                        self.points[index][0] = pos_x[j]
+                        self.points[index][1] = points_yz[i][0]
+                        self.points[index][2] = points_yz[i][1]
                         self.points[index][3] = angle
                         index += 1
                 if order == order_dec:
                     for j in range(num_x-1, -1, -1):
-                        self.points[index][0] = pos_x[j] + self.x_offset
-                        self.points[index][1] = points_yz[i][0] + self.y_offset
-                        self.points[index][2] = points_yz[i][1] + self.z_offset
+                        self.points[index][0] = pos_x[j]
+                        self.points[index][1] = points_yz[i][0]
+                        self.points[index][2] = points_yz[i][1]
                         self.points[index][3] = angle
                         index += 1
                 order = not(order)

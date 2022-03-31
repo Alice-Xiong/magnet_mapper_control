@@ -15,6 +15,13 @@ class Config_Setter(Mapper):
         self.config_dict = self.json_load[self.profile]
         Mapper.config_dict = self.config_dict
 
+    
+    def update_json(self, filename):
+        # Load the items from config_dict back into json file
+        with open(filename, 'w') as fp:
+            fp.write(json.dumps(self.json_load, separators =(', \n', ' : '), sort_keys=False, skipkeys = True))
+            fp.close()
+
 
     # Edits values in a passed in dict, in a generic way, not having to know ahead of time the name and type of each setting
     # Assumption is made that lists/tuples contain only strings, ints, or float types, and that all members of any list/tuple are same type
@@ -107,6 +114,15 @@ class Config_Setter(Mapper):
 
 
 
+        if self.config_dict['x_offset'] + int(self.config_dict['x_range'])/2 > 1000 or self.config_dict['x_offset'] - int(self.config_dict['x_range'])/2 < 0:
+            print("X stage out of range!")
+        elif self.config_dict['y_offset'] + int(self.config_dict['y_range'])/2 > 500 or self.config_dict['y_offset'] - int(self.config_dict['y_range'])/2 < 0:
+            print("Y stage out of range!")
+        elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 500 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
+            print("Z stage out of range!")
+        else:
+            print("All stages within bounds of travel. ")
+
         # Out of while true loop, ask user to save configuration to json file
         inputStr = input('\nDo you want to save these settings? T to save to original file, N to save to a new file, any other key to save nothing. ')
         if inputStr [0] == 'T' or inputStr [0] == 't':
@@ -123,9 +139,3 @@ class Config_Setter(Mapper):
         else:
             print('\nConfigurations NOT saved.\n')
 
-
-    def update_json(self, filename):
-        # Load the items from config_dict back into json file
-        with open(filename, 'w') as fp:
-            fp.write(json.dumps(self.json_load, separators =(', \n', ' : '), sort_keys=False, skipkeys = True))
-            fp.close()

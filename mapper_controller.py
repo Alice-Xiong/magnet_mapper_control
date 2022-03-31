@@ -18,6 +18,12 @@ class Controller (Mapper):
         self.comm_port_zaber = self.config_dict['comm_port_zaber']
         self.comm_port_probe = self.config_dict['comm_port_probe']
 
+
+        # offset values ie origin
+        self.x_offset = self.config_dict['x_offset']
+        self.y_offset = self.config_dict['y_offset']
+        self.z_offset = self.config_dict['z_offset']
+
         # xyz stage settings
         self.probe_stop_time = self.config_dict['probe_stop_time_sec']
         self.max_accelX = self.config_dict['x_accel']
@@ -48,15 +54,28 @@ class Controller (Mapper):
 
     # Function for moving in XYZ
     def moveXYZR(self, Xval, Yval, Zval, angle, unitXYZ, unitR):
-        self.axisX.move_absolute(Xval, unitXYZ, wait_until_idle=False)
-        self.axisY.move_absolute(Yval, unitXYZ, wait_until_idle=False)
-        self.axisZ.move_absolute(Zval, unitXYZ, wait_until_idle=False)
+        self.axisX.move_absolute(Xval + self.x_offset, unitXYZ, wait_until_idle=False)
+        self.axisY.move_absolute(Yval + self.y_offset, unitXYZ, wait_until_idle=False)
+        self.axisZ.move_absolute(Zval + self.z_offset, unitXYZ, wait_until_idle=False)
         self.axisR.move_absolute(angle, unitR, wait_until_idle=False)
 
         self.axisX.wait_until_idle()
         self.axisY.wait_until_idle()
         self.axisZ.wait_until_idle()
         self.axisR.wait_until_idle()
+
+
+    def verify_bounds(self, Xval, Yval, Zval, angle):
+        if Xval + self.x_offset > 1000 or Xval + self.x_offset < 0:
+            return False
+        elif Yval + self.y_offset > 500 or Yval + self.y_offset < 0:
+            return False
+        elif Zval + self.z_offset > 500 or Zval + self.z_offset < 0:
+            return False
+        elif angle > 180 or angle < 0: 
+            return False
+        else:
+            return True
 
 
     # Get warning flags
@@ -68,7 +87,13 @@ class Controller (Mapper):
 
 
     # Collect data from serial port and write one line into the Excel sheet
-    def log_data(self, csv_writer, x, y, z, rot):
+    def log_data(self, csv_writer, x, y, z, rot, in_bounds = True):
+        if not in_bounds:
+            data = [x, y, z, rot, 'out of motion bounds']
+            print(data)
+            csv_writer.writerow(data)
+            return
+
         # configure the serial connections to the probe/Arduino
         with serial.Serial(self.comm_port_probe, 9600, timeout=None) as ser:
             while (True):
@@ -169,13 +194,16 @@ class Controller (Mapper):
                         # Check file is not empty
                         if header != None:
                             for row in csv_reader:
-                                # move the mapper to position
-                                self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
-                                self.check_warnings()
-                                # Wait for oscillation to damp out
-                                sleep(self.probe_stop_time)
-                                # Write data into new csv file
-                                self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]))
+                                if self.verify_bounds():
+                                    # move the mapper to position
+                                    self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
+                                    self.check_warnings()
+                                    # Wait for oscillation to damp out
+                                    sleep(self.probe_stop_time)
+                                    # Write data into new csv file
+                                    self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]))
+                                else:
+                                    self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]), in_bounds=False)
 
                 # not saving data case
                 else:
