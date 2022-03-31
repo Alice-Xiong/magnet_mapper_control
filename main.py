@@ -14,14 +14,15 @@ mapper = Mapper("config.json", "test_rectangular")
 # Initialize
 config_setter = Config_Setter()
 points_generator = Points_Generator()
+points_generator.run()
 controller = Controller()
 
 while True:
-    # TODO: set acceleration -- DONE
-    # TODO: fix b'' and add redundancy to measurements -- DONE
-    # TODO: add case to read arbitrary path 
-    # TODO: check for coordinates going out of bounds and correct
+    # TODO: change coordinate system to the way Marco likes
     # TODO: stress test point generation, fix all weird variables
+    # TODO: fix strings in config setter
+    # TODO: add case to read arbitrary path 
+
 
     # Main menu-ish thing
     print('\n******************** Main Menu ********************\n')
@@ -45,6 +46,7 @@ while True:
         if inputStr [0] == 'T' or inputStr [0] == 't':
             points_generator = Points_Generator()
             points_generator.run()
+            points_generator.generate_edges()
             continue
         elif inputStr [0] == 'Q' or inputStr [0] == 'q':
             print('\n*************** Program cancelled by user. ***************\n')
@@ -56,14 +58,16 @@ while True:
         controller = Controller()
         controller.home()
     elif inputStr [0] == '2':
-        points_generator.run()
         points_generator.generate_edges()
         controller = Controller()
         controller.run_edges()
         pass
     elif inputStr [0] == '3':
+        controller.home()
         controller = Controller()
         controller.run()
+        controller.home()
+        print('\n*************** Program finished ***************\n')
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':
         print('\n*************** Program cancelled by user. ***************\n')
         break

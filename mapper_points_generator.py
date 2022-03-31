@@ -26,6 +26,11 @@ class Points_Generator(Mapper):
             self.z_range = self.config_dict['z_range']
             self.z_spacing = self.config_dict['z_spacing']
 
+        # offsets in each direction
+        self.x_offset = self.config_dict['x_offset']
+        self.y_offset = self.config_dict['y_offset']
+        self.z_offset = self.config_dict['z_offset']
+
         # Configurations common to both shapes
         self.x_range = self.config_dict['x_range']
         self.x_spacing = self.config_dict['x_spacing']
@@ -45,8 +50,8 @@ class Points_Generator(Mapper):
         # start path generation
         j = 0
 
-        self.xmin = self.x_offset - int(self.x_range/2)
-        self.xmax = self.x_offset + int(self.x_range/2)
+        self.xmin = - int(self.x_range/2)
+        self.xmax = int(self.x_range/2)
 
         # 2D edges path at minimum x position (out of magnet)
         for i in range(int(len(self.points) / self.num_angles)):
@@ -207,17 +212,15 @@ class Points_Generator(Mapper):
     Functions to be accessed from outside 
     '''
     def run(self):
-        # Only run script if not using the same path as before, ie a change has been made to configs.
-        if not self.config_changed:
-            self.generate()
-            # Write path to CSV file
-            header = ['X', 'Y', 'Z', 'Rotation']
-            with open(self.path_filename, 'w', encoding='UTF8', newline='') as f:
-                f.truncate()
-                writer = csv.writer(f)
-                writer.writerow(header)
-                writer.writerows(self.points)
-                f.close()
+        self.generate()
+        # Write path to CSV file
+        header = ['X', 'Y', 'Z', 'Rotation']
+        with open(self.path_filename, 'w', encoding='UTF8', newline='') as f:
+            f.truncate()
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(self.points)
+            f.close()
         print('\n*************** Path generation completed. ***************\n')
 
         self.estimate_time()

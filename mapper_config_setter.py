@@ -74,7 +74,7 @@ class Config_Setter(Mapper):
                 # Edit based on type of input
                 if type(itemValue) is str:
                     inputStr = input('Enter a new text value for %s, currently %s: ' %(itemKey, str(itemValue)))
-                    updatDict = {itemKey: inputStr}
+                    updatDict = {itemKey: str(inputStr)}
                 elif type(itemValue) is int:
                     inputStr = input('Enter a new integer value for %s, currently %s: ' %(itemKey, str(itemValue)))
                     updatDict = {itemKey: int(inputStr)}

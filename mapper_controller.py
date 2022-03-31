@@ -98,13 +98,14 @@ class Controller (Mapper):
         with serial.Serial(self.comm_port_probe, 9600, timeout=None) as ser:
             while (True):
                 try:
-                    field = ser.readline().decode('ascii') .strip() # probe reading
+                    ser.readline().decode('ascii').strip() # do not keep the first probe reading
+                    field = ser.readline().decode('ascii').strip() # probe reading
                     field_val = field[:-1]
                     field_unit = field[-1]
                     data = [x, y, z, rot, field_val, field_unit]
                     print(data)
 
-                    if (len(field_val) == 5 or len(field_val) == 6):
+                    if (len(field_val) >= 5):
                         csv_writer.writerow(data)
                         ser.flush()
                         break
@@ -194,7 +195,7 @@ class Controller (Mapper):
                         # Check file is not empty
                         if header != None:
                             for row in csv_reader:
-                                if self.verify_bounds():
+                                if self.verify_bounds(float(row[0]), float(row[1]), float(row[2]), float(row[3])):
                                     # move the mapper to position
                                     self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                                     self.check_warnings()
@@ -216,7 +217,7 @@ class Controller (Mapper):
                             # Wait for oscillation to damp out
                             sleep(self.probe_stop_time)
 
-        print('\n*************** Program finished ***************\n')
+
 
     
 
