@@ -17,18 +17,16 @@ points_generator = Points_Generator()
 controller = Controller()
 
 while True:
-    # TODO: change coordinate system to the way Marco likes
-    # TODO: stress test point generation, fix all weird variables
-    # TODO: fix strings in config setter
     # TODO: add case to read arbitrary path 
 
 
     # Main menu-ish thing
     print('\n******************** Main Menu ********************\n')
     print('0) Change configurations')
-    print('1) Home the mapper')
-    print('2) Run mapper along edges of mapping path')
-    print('3) Start mapper in full mapping path')
+    print('1) Generate path for mapping and for edges')
+    print('2) Home the mapper')
+    print('3) Run mapper along edges of mapping path')
+    print('4) Start mapper in full mapping path')
     print('\nPress Q to exit the program')
 
     # Home stages before magnets turn on
@@ -52,17 +50,19 @@ while True:
             break
         else:
             continue
-
     elif inputStr [0] == '1':
+        points_generator = Points_Generator()
+        points_generator.run()
+        points_generator.generate_edges()
+    elif inputStr [0] == '2':
         controller = Controller()
         controller.home()
-    elif inputStr [0] == '2':
+    elif inputStr [0] == '3':
         points_generator.generate_edges()
         controller = Controller()
         controller.run_edges()
         pass
-    elif inputStr [0] == '3':
-        controller.home()
+    elif inputStr [0] == '4':
         controller = Controller()
         controller.run()
         controller.home()

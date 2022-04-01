@@ -100,7 +100,7 @@ class Controller (Mapper):
 
 
     # Collect data from serial port and write one line into the Excel sheet
-    def log_data(self, csv_writer, x, y, z, rot, in_bounds = True):
+    def log_data(self, x, y, z, rot, in_bounds = True):
         if not in_bounds:
             data = [x, y, z, rot, 'out of motion bounds']
             print(data)
@@ -117,10 +117,15 @@ class Controller (Mapper):
                     field_val = field[:-1]
                     field_unit = field[-1]
                     data = [x, y, z, rot, field_val, field_unit]
-                    print(data)
-
+                    
                     if (len(field_val) >= 5):
-                        csv_writer.writerow(data)
+                        # if data seems correct, place it in csv file
+                        with open(self.data_filename, 'a', newline='') as write_obj:
+                            csv_writer = writer(write_obj)
+                            csv_writer.writerow(data)
+
+                        # print data to screen
+                        print(data)
                         ser.flush()
                         break
                 except Exception as e:
@@ -201,32 +206,35 @@ class Controller (Mapper):
 
                 if self.collect_data:
                     # open the data csv and write the header
-                    with open(self.data_filename, 'w') as write_obj:
-                        self.csv_writer = writer(write_obj)
+                    # newline = '' prevents extra lines between data points
+                    with open(self.data_filename, 'w', newline='') as write_obj:
+                        csv_writer = writer(write_obj)
                         data = ['X', 'Y', 'Z', 'Rotation', 'Data', 'Unit']
-                        self.csv_writer.writerow(data)
+                        csv_writer.writerow(data)
 
-                        # Check file is not empty
-                        if header != None:
-                            for row in csv_reader:
-                                if self.verify_bounds(float(row[0]), float(row[1]), float(row[2]), float(row[3])):
-                                    # move the mapper to position
-                                    self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
-                                    self.check_warnings()
-                                    # Wait for oscillation to damp out
-                                    sleep(self.probe_stop_time)
-                                    # Write data into new csv file
-                                    self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]))
-                                else:
-                                    self.log_data(self.csv_writer, float(row[0]), float(row[1]), float(row[2]), float(row[3]), in_bounds=False)
+                    # Check file is not empty
+                    if header != None:
+                        for row in csv_reader:
+                            x,y,z,rot = [float(i) for i in row]
+                            if self.verify_bounds(x,y,z,rot):
+                                # move the mapper to position
+                                self.moveXYZR(x,y,z,rot, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
+                                self.check_warnings()
+                                # Wait for oscillation to damp out
+                                sleep(self.probe_stop_time)
+                                # Write data into new csv file
+                                self.log_data(x,y,z,rot)
+                            else:
+                                self.log_data(x,y,z,rot, in_bounds=False)
 
                 # not saving data case
                 else:
                     # Check file is not empty
                     if header != None:
                         for row in csv_reader:
+                            x,y,z,rot = row
                             # move the mapper to position
-                            self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), float(row[3]), Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
+                            self.moveXYZR(x,y,z,rot, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                             self.check_warnings()
                             # Wait for oscillation to damp out
                             sleep(self.probe_stop_time)
