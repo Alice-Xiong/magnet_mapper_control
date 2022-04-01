@@ -14,7 +14,6 @@ mapper = Mapper("config.json", "test_rectangular")
 # Initialize
 config_setter = Config_Setter()
 points_generator = Points_Generator()
-points_generator.run()
 controller = Controller()
 
 while True:

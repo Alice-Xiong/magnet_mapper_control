@@ -55,7 +55,9 @@ class Controller (Mapper):
     # Function for moving in XYZ
     def moveXYZR(self, Xval, Yval, Zval, angle, unitXYZ, unitR):
         self.axisX.move_absolute(Xval + self.x_offset, unitXYZ, wait_until_idle=False)
-        self.axisY.move_absolute(Yval + self.y_offset, unitXYZ, wait_until_idle=False)
+        # Y axis is vertical stage. Since our motor is mount at the top of the stage, a smaller commanded position 
+        # corresponds to a higher position, we thus subtract the commanded position instead of adding it to the y offset
+        self.axisY.move_absolute(self.y_offset - Yval, unitXYZ, wait_until_idle=False)
         self.axisZ.move_absolute(Zval + self.z_offset, unitXYZ, wait_until_idle=False)
         self.axisR.move_absolute(angle, unitR, wait_until_idle=False)
 
@@ -66,9 +68,20 @@ class Controller (Mapper):
 
 
     def verify_bounds(self, Xval, Yval, Zval, angle):
+        """Verify whether the commanded position is within range of motion
+
+        Args:
+            Xval (int): Commanded position in X direction in mm (magnet coordinates)
+            Yval (int): Commanded position in Y direction in mm (magnet coordinates)
+            Zval (int): Commanded position in Z direction in mm (magnet coordinates)
+            angle (float): Commanded angle in degrees
+
+        Returns:
+            boolean: True if commanded position is within range of motion, False otherwise
+        """
         if Xval + self.x_offset > 1000 or Xval + self.x_offset < 0:
             return False
-        elif Yval + self.y_offset > 500 or Yval + self.y_offset < 0:
+        elif self.y_offset - Yval > 500 or self.y_offset - Yval  < 0:
             return False
         elif Zval + self.z_offset > 500 or Zval + self.z_offset < 0:
             return False
@@ -98,7 +111,8 @@ class Controller (Mapper):
         with serial.Serial(self.comm_port_probe, 9600, timeout=None) as ser:
             while (True):
                 try:
-                    ser.readline().decode('ascii').strip() # do not keep the first probe reading
+                    ser.readline() # do not keep the first or second probe reading
+                    ser.readline()
                     field = ser.readline().decode('ascii').strip() # probe reading
                     field_val = field[:-1]
                     field_unit = field[-1]
@@ -122,9 +136,9 @@ class Controller (Mapper):
             
             # TODO：Add this order to configs
             # initialize structures for devices and axis
-            deviceX = self.device_list[0] # orthogonal to magnet, first stage
-            deviceY = self.device_list[1] # parallel to magnet, horizontal, second stage
-            deviceZ = self.device_list[2] # parallel to magnet, vertical, third stage
+            deviceX = self.device_list[1] # parallel to magnet, horizontal, second stage
+            deviceY = self.device_list[2] # parallel to magnet, vertical, third stage
+            deviceZ = self.device_list[0] # orthogonal to magnet, first stage
             deviceR = self.device_list[3] # last rotation stage
 
             self.axisX = deviceX.get_axis(1)
@@ -165,9 +179,9 @@ class Controller (Mapper):
             
             # TODO：Add this order to configs
             # initialize structures for devices and axis
-            deviceX = self.device_list[0] # orthogonal to magnet, first stage
-            deviceY = self.device_list[1] # parallel to magnet, horizontal, second stage
-            deviceZ = self.device_list[2] # parallel to magnet, vertical, third stage
+            deviceX = self.device_list[1] # parallel to magnet, horizontal, second stage
+            deviceY = self.device_list[2] # parallel to magnet, vertical, third stage
+            deviceZ = self.device_list[0] # orthogonal to magnet, first stage
             deviceR = self.device_list[3] # last rotation stage
 
             self.axisX = deviceX.get_axis(1)

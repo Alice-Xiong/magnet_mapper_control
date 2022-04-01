@@ -1,6 +1,5 @@
 import numpy as np
 import csv
-import json
 from mapper_base import Mapper
 
 class Points_Generator(Mapper):
@@ -19,7 +18,7 @@ class Points_Generator(Mapper):
         # Configurations specific to cylinder and rectangle
         if self.shape == "cylinder":
             self.radius = self.config_dict['radius']
-            self.yz_spacing = self.config_dict['yz_spacing']
+            self.xy_spacing = self.config_dict['xy_spacing']
         elif self.shape == "rectangular":
             self.y_range = self.config_dict['y_range']
             self.y_spacing = self.config_dict['y_spacing']
@@ -45,33 +44,30 @@ class Points_Generator(Mapper):
 
         elif (self.shape == "rectangular"):
             # generate the points for edges
-            self.points_edges = np.zeros([int(self.num_cols_Y * 4 / self.num_angles), 4])
+            self.points_edges = np.zeros([int(self.num_x * 4 / self.num_angles), 4])
 
         # start path generation
         j = 0
 
-        self.xmin = - int(self.x_range/2)
-        self.xmax = int(self.x_range/2)
-
-        # 2D edges path at minimum x position (out of magnet)
+        # 2D edges path at minimum z position (out of magnet)
         for i in range(int(len(self.points) / self.num_angles)):
-            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
-                self.points_edges[j][0] = self.xmin
+            if  (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                self.points_edges[j][0] = self.points[i][0]
                 self.points_edges[j][1] = self.points[i][1]
-                self.points_edges[j][2] = self.points[i][2]
+                self.points_edges[j][2] = -self.z_range/2
                 j += 1
 
-        # 2D edges path at maximum x position (into magnet)
+        # 2D edges path at maximum z position (into magnet)
         for i in range(int(len(self.points) / self.num_angles)):
-            if  (i==0) or (self.points[i][1] != self.points[i-1][1]) or (i==len(self.points)-1) or (self.points[i][1] != self.points[i+1][1]):
-                self.points_edges[j][0] = self.xmax
+            if  (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                self.points_edges[j][0] = self.points[i][0]
                 self.points_edges[j][1] = self.points[i][1]
-                self.points_edges[j][2] = self.points[i][2]
+                self.points_edges[j][2] = self.z_range/2
                 j += 1
 
         
         # store them into a CSV file
-        header = ['X', 'Y', 'Z', 'Rotation']
+        header = ['x', 'y', 'Z', 'Rotation']
         with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
             f.truncate()
             writer = csv.writer(f)
@@ -90,14 +86,14 @@ class Points_Generator(Mapper):
         # Generate xy points in cylindrical coordinates
         if self.shape == "cylinder":
             # number of columns (= num of rows) under the given radius and spacing
-            num_cols_half = int(self.radius/self.yz_spacing)
-            self.num_cols = 2 * num_cols_half + 1
+            num_cols_half = self.radius / self.xy_spacing
+            self.num_cols = int(2 * self.radius / self.xy_spacing + 1)
 
             # possible positions of each column
-            pos_yz = np.arange(-self.yz_spacing * num_cols_half, self.yz_spacing * (num_cols_half + 1), self.yz_spacing)
+            pos_xy = np.arange(-self.xy_spacing * num_cols_half, self.xy_spacing * (num_cols_half + 1), self.xy_spacing)
 
             # Fill all possible y, z values
-            points_yz = np.zeros([self.num_cols * self.num_cols, 2])
+            points_xy = np.zeros([self.num_cols * self.num_cols, 2])
 
             # Initialize variables for pathing
             index = 0
@@ -105,20 +101,20 @@ class Points_Generator(Mapper):
             for i in range(self.num_cols):
                 if order == order_inc:
                     for j in range(0, self.num_cols, 1):
-                        y = pos_yz[i]
-                        z = pos_yz[j]
+                        x = pos_xy[i]
+                        y = pos_xy[j]
                         # make sure points are within circle
-                        if (z *  z+ y * y < self.radius * self.radius):
-                            points_yz[index][0] = y
-                            points_yz[index][1] = z
+                        if (x *  x+ y * y < self.radius * self.radius):
+                            points_xy[index][0] = x
+                            points_xy[index][1] = y
                             index += 1
                 if order == order_dec:
                     for j in range(self.num_cols-1, -1, -1):
-                        y = pos_yz[i]
-                        z = pos_yz[j]
-                        if (z * z + y * y < self.radius * self.radius):
-                            points_yz[index][0]= y
-                            points_yz[index][1] = z
+                        x = pos_xy[i]
+                        y = pos_xy[j]
+                        if (x * x + y * y < self.radius * self.radius):
+                            points_xy[index][0]= x
+                            points_xy[index][1] = y
                             index += 1
 
                 # switch increasing/decreasing order for every pass
@@ -127,65 +123,67 @@ class Points_Generator(Mapper):
         # Generate xy points in rectangular coordinates
         elif self.shape == "rectangular":
             # number of columns (= num of rows) under the given radius and spacing
-            num_cols_half_Y = int(self.y_range/self.y_spacing/2 + 1)
-            num_cols_half_Z = int(self.z_range/self.z_spacing/2 + 1)
-            num_cols_Y = int(self.y_range/self.y_spacing) + 1
-            num_cols_Z = int(self.z_range/self.z_spacing) + 1
-            self.num_cols_Y = num_cols_Y #save this for other function
+            num_x_half = self.x_range/self.x_spacing/2
+            num_y_half = self.y_range/self.y_spacing/2
+            self.num_x = int(self.x_range/self.x_spacing) + 1
+            self.num_y = int(self.y_range/self.y_spacing) + 1
 
             # possible positions of each column
-            pos_Y = np.arange(-self.y_spacing * (num_cols_half_Y - 1), self.y_spacing * (num_cols_half_Y + 1), self.y_spacing)
-            pos_Z = np.arange(-self.z_spacing * (num_cols_half_Z - 1), self.z_spacing * (num_cols_half_Z + 1), self.z_spacing)
+            pos_x = np.arange(-self.x_spacing * num_x_half, self.x_spacing * (num_x_half + 1), self.x_spacing)
+            pos_y = np.arange(-self.y_spacing * num_y_half, self.y_spacing * (num_y_half + 1), self.y_spacing)
 
             # Fill all possible y, z values
-            points_yz = np.zeros([num_cols_Y * num_cols_Z, 2])
+            points_xy = np.zeros([self.num_x * self.num_y, 2])
 
             # Initialize variables for pathing
             index = 0
             order = order_inc
-            for i in range(num_cols_Y):
+            for i in range(self.num_x):
                 if order == order_inc:
-                    for j in range(0, num_cols_Z, 1):
-                        points_yz[index][0] = pos_Y[i]
-                        points_yz[index][1] = pos_Z[j]
+                    for j in range(0, self.num_y, 1):
+                        points_xy[index][0] = pos_x[i]
+                        points_xy[index][1] = pos_y[j]
                         index += 1
                 if order == order_dec:
-                    for j in range(num_cols_Z-1, -1, -1):
-                        points_yz[index][0] = pos_Y[i]
-                        points_yz[index][1] = pos_Z[j]
+                    for j in range(self.num_y-1, -1, -1):
+                        points_xy[index][0] = pos_x[i]
+                        points_xy[index][1] = pos_y[j]
                         index += 1
                 # switch increasing/decreasing order for every pass
                 order = not(order)
 
         # trim all zeros and get valid point length
-        points_yz_1D_trim = np.trim_zeros(points_yz.flatten(), trim = 'b')
-        points_yz = np.reshape(points_yz_1D_trim, (-1, 2))
-        num_points_yz = len(points_yz)
+        points_xy_1D_trim = np.trim_zeros(points_xy.flatten(), trim = 'b')
+        # case when y coordinate happen to be zero
+        if (len(points_xy_1D_trim) % 2 != 0):
+            points_xy_1D_trim = np.append(points_xy_1D_trim, 0)
+        points_xy = np.reshape(points_xy_1D_trim, (-1, 2))
+        num_points_xy = len(points_xy)
 
-        # possible positions in x direction (going into magnet)
-        num_x = int(self.x_range/self.x_spacing) + 1
-        num_x_half = int(self.x_range/self.x_spacing/2) + 1
-        pos_x = np.arange(- self.x_spacing * (num_x_half - 1), self.x_spacing * (num_x_half + 1), self.x_spacing)
+        # possible positions in z direction (going into magnet)
+        num_z = int(self.z_range/self.z_spacing) + 1
+        num_z_half = int(self.z_range/self.z_spacing/2) + 1
+        pos_z = np.arange(- self.z_spacing * (num_z_half - 1), self.z_spacing * (num_z_half + 1), self.z_spacing)
 
         # z direction and angular points
         self.num_angles = len(self.rotation_angles)
-        self.points = np.zeros([num_points_yz * num_x * self.num_angles, 4])
+        self.points = np.zeros([num_points_xy * num_z * self.num_angles, 4])
         index = 0
         order = order_inc
         for angle in self.rotation_angles:
-            for i in range(num_points_yz):
+            for i in range(num_points_xy):
                 if order == order_inc:
-                    for j in range(0, num_x, 1):
-                        self.points[index][0] = pos_x[j]
-                        self.points[index][1] = points_yz[i][0]
-                        self.points[index][2] = points_yz[i][1]
+                    for j in range(0, num_z, 1):
+                        self.points[index][0] = points_xy[i][0]
+                        self.points[index][1] = points_xy[i][1]
+                        self.points[index][2] = pos_z[j]
                         self.points[index][3] = angle
                         index += 1
                 if order == order_dec:
-                    for j in range(num_x-1, -1, -1):
-                        self.points[index][0] = pos_x[j]
-                        self.points[index][1] = points_yz[i][0]
-                        self.points[index][2] = points_yz[i][1]
+                    for j in range(num_z-1, -1, -1):
+                        self.points[index][0] = points_xy[i][0]
+                        self.points[index][1] = points_xy[i][1]
+                        self.points[index][2] = pos_z[j]
                         self.points[index][3] = angle
                         index += 1
                 order = not(order)
