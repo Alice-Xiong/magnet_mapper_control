@@ -13,6 +13,7 @@ mapper = Mapper("config.json", "test_rectangular")
 
 # Initialize
 config_setter = Config_Setter()
+
 points_generator = Points_Generator()
 controller = Controller()
 
@@ -65,7 +66,7 @@ while True:
     elif inputStr [0] == '4':
         controller = Controller()
         controller.run()
-        controller.home()
+        #controller.home()
         print('\n*************** Program finished ***************\n')
     elif inputStr [0] == 'Q' or inputStr [0] == 'q':
         print('\n*************** Program cancelled by user. ***************\n')

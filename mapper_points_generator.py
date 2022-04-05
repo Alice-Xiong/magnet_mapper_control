@@ -1,5 +1,6 @@
 import numpy as np
-from csv import reader, writer
+import csv
+#from csv import reader, writer
 from mapper_base import Mapper
 
 class Points_Generator(Mapper):
@@ -75,7 +76,7 @@ class Points_Generator(Mapper):
         header = ['X', 'Y', 'Z', 'Rotation']
         with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
             f.truncate()
-            writer = writer(f)
+            writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(self.points_edges)
             f.close()
@@ -86,7 +87,7 @@ class Points_Generator(Mapper):
     def generate_custom(self): 
 
         with open(self.custom_path_filename, 'r') as input:
-            csv_reader = reader(input)
+            csv_reader = csv.reader(input)
             header = next(csv_reader)
 
         points_xyr = np.array([])
@@ -136,7 +137,7 @@ class Points_Generator(Mapper):
         header = ['X', 'Y', 'Z', 'Rotation']
         with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
             f.truncate()
-            writer = writer(f)
+            writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(self.points_edges)
             f.close()

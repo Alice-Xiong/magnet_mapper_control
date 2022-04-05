@@ -114,11 +114,11 @@ class Config_Setter(Mapper):
 
 
 
-        if self.config_dict['x_offset'] + int(self.config_dict['x_range'])/2 > 1000 or self.config_dict['x_offset'] - int(self.config_dict['x_range'])/2 < 0:
+        if self.config_dict['x_offset'] + int(self.config_dict['x_range'])/2 > 500 or self.config_dict['x_offset'] - int(self.config_dict['x_range'])/2 < 0:
             print("X stage out of range!")
         elif self.config_dict['y_offset'] + int(self.config_dict['y_range'])/2 > 500 or self.config_dict['y_offset'] - int(self.config_dict['y_range'])/2 < 0:
             print("Y stage out of range!")
-        elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 500 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
+        elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 1000 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
             print("Z stage out of range!")
         else:
             print("All stages within bounds of travel. ")

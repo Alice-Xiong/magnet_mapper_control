@@ -7,6 +7,7 @@ from zaber_motion.ascii import SettingConstants
 from csv import reader, writer
 from mapper_base import Mapper
 import serial
+import re
 
 class Controller (Mapper):
     def __init__(self): 
@@ -58,11 +59,12 @@ class Controller (Mapper):
         # Y axis is vertical stage. Since our motor is mount at the top of the stage, a smaller commanded position 
         # corresponds to a higher position, we thus subtract the commanded position instead of adding it to the y offset
         self.axisY.move_absolute(self.y_offset - Yval, unitXYZ, wait_until_idle=False)
+        self.axisX.wait_until_idle()
+        self.axisY.wait_until_idle()
+
         self.axisZ.move_absolute(Zval + self.z_offset, unitXYZ, wait_until_idle=False)
         self.axisR.move_absolute(angle, unitR, wait_until_idle=False)
 
-        self.axisX.wait_until_idle()
-        self.axisY.wait_until_idle()
         self.axisZ.wait_until_idle()
         self.axisR.wait_until_idle()
 
@@ -79,11 +81,11 @@ class Controller (Mapper):
         Returns:
             boolean: True if commanded position is within range of motion, False otherwise
         """
-        if Xval + self.x_offset > 1000 or Xval + self.x_offset < 0:
+        if Xval + self.x_offset > 500 or Xval + self.x_offset < 0:
             return False
         elif self.y_offset - Yval > 500 or self.y_offset - Yval  < 0:
             return False
-        elif Zval + self.z_offset > 500 or Zval + self.z_offset < 0:
+        elif Zval + self.z_offset > 1000 or Zval + self.z_offset < 0:
             return False
         elif angle > 180 or angle < 0: 
             return False
@@ -114,20 +116,21 @@ class Controller (Mapper):
                     ser.readline() # do not keep the first or second probe reading
                     ser.readline()
                     field = ser.readline().decode('ascii').strip() # probe reading
-                    field_val = field[:-1]
+                    # use regular expression to check the field satisfies a certain value
+                    field_val = re.findall('-*[0-9]{1,2}\.[0-9]{2,4}', field)[0]
                     field_unit = field[-1]
                     data = [x, y, z, rot, field_val, field_unit]
                     
-                    if (len(field_val) >= 5):
-                        # if data seems correct, place it in csv file
-                        with open(self.data_filename, 'a', newline='') as write_obj:
-                            csv_writer = writer(write_obj)
-                            csv_writer.writerow(data)
+                    # if data seems correct, place it in csv file
+                    with open(self.data_filename, 'a', newline='') as write_obj:
+                        csv_writer = writer(write_obj)
+                        csv_writer.writerow(data)
 
-                        # print data to screen
-                        print(data)
-                        ser.flush()
-                        break
+                    # print data to screen
+                    print(data)
+                    ser.flush()
+                    break
+
                 except Exception as e:
                     pass
             
