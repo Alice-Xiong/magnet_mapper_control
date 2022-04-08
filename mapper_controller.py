@@ -21,7 +21,6 @@ class Controller (Mapper):
         self.comm_port_zaber = self.config_dict['comm_port_zaber']
         self.comm_port_probe = self.config_dict['comm_port_probe']
 
-
         # offset values ie origin
         self.x_offset = self.config_dict['x_offset']
         self.y_offset = self.config_dict['y_offset']
@@ -60,18 +59,18 @@ class Controller (Mapper):
 
     # Function for moving in XYZ
     def moveXYZR(self, Xval, Yval, Zval, angle, unitXYZ, unitR):
-        self.axisX.move_absolute(Xval + self.x_offset, unitXYZ, wait_until_idle=False)
+        self.axisX.move_absolute(self.x_offset + Xval, unitXYZ, wait_until_idle=False)
         # Y axis is vertical stage. Since our motor is mount at the top of the stage, a smaller commanded position 
         # corresponds to a higher position, we thus subtract the commanded position instead of adding it to the y offset
         self.axisY.move_absolute(self.y_offset - Yval, unitXYZ, wait_until_idle=False)
+        self.axisR.move_absolute(angle, unitR, wait_until_idle=False)
         self.axisX.wait_until_idle()
         self.axisY.wait_until_idle()
+        self.axisR.wait_until_idle()
 
         self.axisZ.move_absolute(Zval + self.z_offset, unitXYZ, wait_until_idle=False)
-        self.axisR.move_absolute(angle, unitR, wait_until_idle=False)
-
         self.axisZ.wait_until_idle()
-        self.axisR.wait_until_idle()
+        
 
 
     def verify_bounds(self, Xval, Yval, Zval, angle):
@@ -92,7 +91,7 @@ class Controller (Mapper):
             return False
         elif Zval + self.z_offset > 1000 or Zval + self.z_offset < 0:
             return False
-        elif angle > 180 or angle < 0: 
+        elif angle > 360 or angle < 0: 
             return False
         else:
             return True
@@ -195,16 +194,16 @@ class Controller (Mapper):
                                 # Wait for oscillation to damp out
                                 sleep(self.probe_stop_time)
                                 # Write data into new csv file
-                                self.log_data(x,y,z,rot)
+                                self.datalogger.log_data(x,y,z,rot)
                             else:
-                                self.log_data(x,y,z,rot, in_bounds=False)
+                                self.datalogger.log_data(x,y,z,rot, in_bounds=False)
 
                 # not saving data case
                 else:
                     # Check file is not empty
                     if header != None:
                         for row in csv_reader:
-                            x,y,z,rot = row
+                            x,y,z,rot = [float(i) for i in row]
                             # move the mapper to position
                             self.moveXYZR(x,y,z,rot, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                             self.check_warnings()

@@ -163,7 +163,7 @@ class Points_Generator(Mapper):
                         x = pos_xy[i]
                         y = pos_xy[j]
                         # make sure points are within circle
-                        if (x *  x+ y * y < self.radius * self.radius):
+                        if (x *  x+ y * y <= self.radius * self.radius):
                             points_xy[index][0] = x
                             points_xy[index][1] = y
                             index += 1
@@ -171,7 +171,7 @@ class Points_Generator(Mapper):
                     for j in range(self.num_cols-1, -1, -1):
                         x = pos_xy[i]
                         y = pos_xy[j]
-                        if (x * x + y * y < self.radius * self.radius):
+                        if (x * x + y * y <= self.radius * self.radius):
                             points_xy[index][0]= x
                             points_xy[index][1] = y
                             index += 1
@@ -335,7 +335,7 @@ class Points_Generator(Mapper):
         """
         if self.shape == "cylinder":
             # generate the points for edges
-            self.points_edges = np.zeros([self.num_cols * 4, 4])
+            self.points_edges = np.zeros([int(self.num_cols * 4), 4])
 
         elif self.shape == "rectangular":
             # generate the points for edges
@@ -494,7 +494,7 @@ class Points_Generator(Mapper):
 
         # Generate edges path
         self.generate_edges()
-        self.write_CSV(self.path_edges_filename, self.points)
+        self.write_CSV(self.path_edges_filename, self.points_edges)
         self.estimate_time(self.path_edges_filename, 1)
             
 

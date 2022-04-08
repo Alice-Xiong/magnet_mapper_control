@@ -56,7 +56,7 @@ class Datalogger():
                     ser.readline()
                     field = ser.readline().decode('ascii').strip() # probe reading
                     # use regular expression to check the field satisfies a certain value
-                    field_val = re.findall('-*[0-9]{1,2}\.[0-9]{2,4}', field)[0]
+                    field_val = re.findall('-*[0-9]{1,5}\.[0-9]{1,4}', field)[0]
                     field_unit = field[-1]
                     data = [x, y, z, rot, field_val, field_unit]
                     # print data to screen

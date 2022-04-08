@@ -8,9 +8,13 @@ from mapper_points_generator import Points_Generator
 from mapper_controller import Controller
 import sys, getopt
 
-def main(argv):
+
+
+def init(argv):
     config_file = 'config.json'
     profile_name = 'test_rectangular'
+
+    # get the config_file and profile_name from arguments when opening the file
     try:
         opts, args = getopt.getopt(argv,"hc:p:",["config_filename=","profile_name="])
     except getopt.GetoptError:
@@ -27,21 +31,23 @@ def main(argv):
     print('Config file is ', config_file)
     print('Profile name is ', profile_name)
 
-    # Ask user to input json profile name
-    #inputStr_config = input('Enter your config filename (.json will be automatically appeneded to your filename): ') + ".json"
-    #inputStr_profile = input('Enter your profile name: ')
+    return config_file, profile_name
+
+    
+
+def main(argv):
+    # Get filenames
+    config_file, profile_name = init(argv)
+
+    # Initialize mapper object
     Mapper(config_file, profile_name)
 
     # Initialize
     config_setter = Config_Setter()
-
     points_generator = Points_Generator()
     controller = Controller()
 
     while True:
-        # TODO: add case to read arbitrary path 
-
-
         # Main menu-ish thing
         print('\n******************** Main Menu ********************\n')
         print('0) Change configurations')
