@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 from mapper_base import Mapper
 
@@ -112,16 +113,25 @@ class Config_Setter(Mapper):
                         updatDict = {itemKey: False}
                 self.config_dict.update(updatDict)
 
-
-
-        if self.config_dict['x_offset'] + int(self.config_dict['x_range'])/2 > 500 or self.config_dict['x_offset'] - int(self.config_dict['x_range'])/2 < 0:
-            print("X stage out of range!")
-        elif self.config_dict['y_offset'] + int(self.config_dict['y_range'])/2 > 500 or self.config_dict['y_offset'] - int(self.config_dict['y_range'])/2 < 0:
-            print("Y stage out of range!")
-        elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 1000 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
-            print("Z stage out of range!")
-        else:
-            print("All stages within bounds of travel. ")
+        # Check if values are within bounds
+        if self.config_dict['shape'] == 'rectangular':
+            if self.config_dict['x_offset'] + int(self.config_dict['x_range'])/2 > 500 or self.config_dict['x_offset'] - int(self.config_dict['x_range'])/2 < 0:
+                print("X stage out of range!")
+            elif self.config_dict['y_offset'] + int(self.config_dict['y_range'])/2 > 500 or self.config_dict['y_offset'] - int(self.config_dict['y_range'])/2 < 0:
+                print("Y stage out of range!")
+            elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 1000 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
+                print("Z stage out of range!")
+            else:
+                print("All stages within bounds of travel. ")
+        elif self.config_dict['shape'] == 'cylinder':
+            if self.config_dict['x_offset'] + int(self.config_dict['radius'])/2 > 500 or self.config_dict['x_offset'] - int(self.config_dict['radius'])/2 < 0:
+                print("X stage out of range!")
+            elif self.config_dict['y_offset'] + int(self.config_dict['radius'])/2 > 500 or self.config_dict['y_offset'] - int(self.config_dict['radius'])/2 < 0:
+                print("Y stage out of range!")
+            elif self.config_dict['z_offset'] + int(self.config_dict['z_range'])/2 > 1000 or self.config_dict['z_offset'] - int(self.config_dict['z_range'])/2 < 0:
+                print("Z stage out of range!")
+            else:
+                print("All stages within bounds of travel. ")
 
         # Out of while true loop, ask user to save configuration to json file
         inputStr = input('\nDo you want to save these settings? T to save to original file, N to save to a new file, any other key to save nothing. ')

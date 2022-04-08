@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
+            "args": ["-c", "config_default.json", "-p", "rectangular"],
             "console": "integratedTerminal",
             "justMyCode": true
         }

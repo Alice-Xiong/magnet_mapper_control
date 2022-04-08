@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from time import sleep
 from rx import throw
 from zaber_motion import Units, Library
@@ -120,14 +121,14 @@ class Controller (Mapper):
                     field_val = re.findall('-*[0-9]{1,2}\.[0-9]{2,4}', field)[0]
                     field_unit = field[-1]
                     data = [x, y, z, rot, field_val, field_unit]
+                    # print data to screen
+                    print(data)
                     
                     # if data seems correct, place it in csv file
                     with open(self.data_filename, 'a', newline='') as write_obj:
                         csv_writer = writer(write_obj)
                         csv_writer.writerow(data)
 
-                    # print data to screen
-                    print(data)
                     ser.flush()
                     break
 
@@ -141,8 +142,7 @@ class Controller (Mapper):
         with Connection.open_serial_port(self.comm_port_zaber) as connection:
             # establish serial connections
             self.device_list = connection.detect_devices()
-            
-            # TODO：Add this order to configs
+
             # initialize structures for devices and axis
             deviceX = self.device_list[1] # parallel to magnet, horizontal, second stage
             deviceY = self.device_list[2] # parallel to magnet, vertical, third stage
@@ -167,11 +167,12 @@ class Controller (Mapper):
                 # Check file is not empty
                 if header != None:
                     for row in csv_reader:
+                        x,y,z,rot = [float(i) for i in row]
                         # move the mapper to position
-                        self.moveXYZR(float(row[0]), float(row[1]), float(row[2]), 0, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
+                        self.moveXYZR(x,y,z, rot, Units.LENGTH_MILLIMETRES, Units.ANGLE_DEGREES)
                         self.check_warnings()
                         # Wait for oscillation to damp out
-                        sleep(self.probe_stop_time)
+                        sleep(1)
 
             
 
@@ -185,7 +186,6 @@ class Controller (Mapper):
             # establish serial connections
             self.device_list = connection.detect_devices()
             
-            # TODO：Add this order to configs
             # initialize structures for devices and axis
             deviceX = self.device_list[1] # parallel to magnet, horizontal, second stage
             deviceY = self.device_list[2] # parallel to magnet, vertical, third stage

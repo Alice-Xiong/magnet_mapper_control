@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 import csv
 #from csv import reader, writer
@@ -25,8 +26,8 @@ class Points_Generator(Mapper):
         elif self.shape == "rectangular":
             self.y_range = self.config_dict['y_range']
             self.y_spacing = self.config_dict['y_spacing']
-            self.z_range = self.config_dict['z_range']
-            self.z_spacing = self.config_dict['z_spacing']
+            self.x_range = self.config_dict['x_range']
+            self.x_spacing = self.config_dict['x_spacing']
             self.rotation_angles = self.config_dict['rotation_points']
         elif self.shape == "custom":
             self.custom_path_filename = self.config_dict['custom_xyr_path_filename']
@@ -37,114 +38,11 @@ class Points_Generator(Mapper):
         self.z_offset = self.config_dict['z_offset']
 
         # Configurations common to both shapes
-        self.x_range = self.config_dict['x_range']
-        self.x_spacing = self.config_dict['x_spacing']
+        self.z_range = self.config_dict['z_range']
+        self.z_spacing = self.config_dict['z_spacing']
         self.probe_stop_time_sec = self.config_dict['probe_stop_time_sec']
         
 
-
-    def generate_edges(self): 
-        if self.shape == "cylinder":
-            # generate the points for edges
-            self.points_edges = np.zeros([self.num_cols * 4, 4])
-
-        elif (self.shape == "rectangular"):
-            # generate the points for edges
-            self.points_edges = np.zeros([int(self.num_x * 4 / self.num_angles), 4])
-
-        # start path generation
-        j = 0
-
-        # 2D edges path at minimum z position (out of magnet)
-        for i in range(int(len(self.points) / self.num_angles)):
-            if  (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
-                self.points_edges[j][0] = self.points[i][0]
-                self.points_edges[j][1] = self.points[i][1]
-                self.points_edges[j][2] = -self.z_range/2
-                j += 1
-
-        # 2D edges path at maximum z position (into magnet)
-        for i in range(int(len(self.points) / self.num_angles)):
-            if  (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
-                self.points_edges[j][0] = self.points[i][0]
-                self.points_edges[j][1] = self.points[i][1]
-                self.points_edges[j][2] = self.z_range/2
-                j += 1
-
-        
-        # store them into a CSV file
-        header = ['X', 'Y', 'Z', 'Rotation']
-        with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
-            f.truncate()
-            writer = csv.writer(f)
-            writer.writerow(header)
-            writer.writerows(self.points_edges)
-            f.close()
-
-        print('\n*************** Path for moving around edges generated ************\n')
-
-
-    def generate_custom(self): 
-
-        with open(self.custom_path_filename, 'r') as input:
-            csv_reader = csv.reader(input)
-            header = next(csv_reader)
-
-        points_xyr = np.array([])
-
-        for row in csv_reader:
-            if len(row) == 6:
-                print(row)
-                x, y, r = [float(i) for i in row]
-                points_xyr = np.append(points_xyr, [x, y, r])
-        num_points_xyr = len(points_xyr)
-
-        # Constants for order
-        order_inc = True
-        order_dec = False
-
-        # possible positions in z direction (going into magnet)
-        num_z = int(self.z_range/self.z_spacing) + 1
-        num_z_half = int(self.z_range/self.z_spacing/2) + 1
-        pos_z = np.arange(- self.z_spacing * (num_z_half - 1), self.z_spacing * (num_z_half + 1), self.z_spacing)
-
-        # z direction and angular points
-        self.points = np.zeros([num_points_xyr * num_z, 4])
-        index = 0
-        order = order_inc
-        for i in range(num_points_xyr):
-            # go forward in z direction
-            if order == order_inc:
-                for j in range(0, num_z, 1):
-                    self.points[index][0] = points_xyr[i][0]
-                    self.points[index][1] = points_xyr[i][1]
-                    self.points[index][2] = pos_z[j]
-                    self.points[index][3] = points_xyr[i][2]
-                    index += 1
-            # reverse in z direction
-            if order == order_dec:
-                for j in range(num_z-1, -1, -1):
-                    self.points[index][0] = points_xyr[i][0]
-                    self.points[index][1] = points_xyr[i][1]
-                    self.points[index][2] = pos_z[j]
-                    self.points[index][3] = points_xyr[i][2]
-                    index += 1
-            order = not(order)
-
-
-        
-        # store them into a CSV file
-        header = ['X', 'Y', 'Z', 'Rotation']
-        with open(self.path_edges_filename, 'w', encoding='UTF8', newline='') as f:
-            f.truncate()
-            writer = csv.writer(f)
-            writer.writerow(header)
-            writer.writerows(self.points_edges)
-            f.close()
-
-        print('\n*************** Path for moving around edges generated ************\n')
-
-        
     def generate(self):
         # Constants for order
         order_inc = True
@@ -255,14 +153,154 @@ class Points_Generator(Mapper):
                         index += 1
                 order = not(order)
 
+        print(f'\n*************** Path generated for {self.shape} region ************\n')
 
-    def estimate_time(self):
+
+    def generate_custom(self): 
+        with open(self.custom_path_filename, 'r') as input:
+            csv_reader = csv.reader(input)
+            next(csv_reader)
+
+            points_xyr = np.array([])
+
+            # read the csv and dump position vlaues in points_xyr
+            for row in csv_reader:
+                x, y, r = [float(i) for i in row]
+                points_xyr = np.append(points_xyr, [x, y, r])
+            points_xyr = np.reshape(points_xyr, (-1, 3))
+            num_points_xyr = len(points_xyr)
+
+        # Constants for order
+        order_inc = True
+        order_dec = False
+
+        # possible positions in z direction (going into magnet)
+        num_z = int(self.z_range/self.z_spacing) + 1
+        num_z_half = int(self.z_range/self.z_spacing/2) + 1
+        pos_z = np.arange(- self.z_spacing * (num_z_half - 1), self.z_spacing * (num_z_half + 1), self.z_spacing)
+
+        # z direction and angular points
+        self.points = np.zeros([num_points_xyr * num_z, 4])
+        index = 0
+        order = order_inc
+        for i in range(num_points_xyr):
+            # go forward in z direction
+            if order == order_inc:
+                for j in range(0, num_z, 1):
+                    self.points[index][0] = points_xyr[i][0]
+                    self.points[index][1] = points_xyr[i][1]
+                    self.points[index][2] = pos_z[j]
+                    self.points[index][3] = points_xyr[i][2]
+                    index += 1
+            # reverse in z direction
+            if order == order_dec:
+                for j in range(num_z-1, -1, -1):
+                    self.points[index][0] = points_xyr[i][0]
+                    self.points[index][1] = points_xyr[i][1]
+                    self.points[index][2] = pos_z[j]
+                    self.points[index][3] = points_xyr[i][2]
+                    index += 1
+            order = not(order)
+
+        print('\n*************** Path generated according to custom XYR path ************\n')
+
+        
+
+
+    def generate_edges(self): 
+        if self.shape == "cylinder":
+            # generate the points for edges
+            self.points_edges = np.zeros([self.num_cols * 4, 4])
+
+        elif self.shape == "rectangular":
+            # generate the points for edges
+            self.points_edges = np.zeros([self.num_x * 4, 4])
+            
+        elif self.shape == 'custom':
+            # For custom path, path may be different for different angles, so run through all angles
+            self.points_edges = np.zeros([len(self.points) , 4])
+            self.num_angles = 1
+
+        if self.shape == 'custom':
+            # start path generation
+            j = 0  # index number of edges array  
+
+            # 2D edges path at minimum z position (out of magnet)
+            for i in range(int(len(self.points) / self.num_angles)):
+                if (i==0) or (self.points[i][0] != self.points[i-1][0]):
+                    self.points_edges[j][0] = self.points[i][0]
+                    self.points_edges[j][1] = self.points[i][1]
+                    self.points_edges[j][2] = -self.z_range/2
+                    self.points_edges[j][3] = self.points[i][3]
+                    j += 1
+
+            # 2D edges path at minimum z position (out of magnet)
+            for i in range(int(len(self.points) / self.num_angles)-1, 0, -1):
+                if (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                    self.points_edges[j][0] = self.points[i][0]
+                    self.points_edges[j][1] = self.points[i][1]
+                    self.points_edges[j][2] = self.z_range/2
+                    self.points_edges[j][3] = self.points[i][3]
+                    j += 1
+
+        else:
+            # start path generation
+            j = 0  # index number of edges array
+            k = 0  # helps change order of path      
+
+            # 2D edges path at minimum z position (out of magnet)
+            for i in range(int(len(self.points) / self.num_angles)):
+                if (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                    if (k%4 == 0) or (k%4 == 3):
+                        self.points_edges[j][0] = self.points[i][0]
+                        self.points_edges[j][1] = self.points[i][1]
+                        self.points_edges[j][2] = -self.z_range/2
+                        self.points_edges[j][3] = self.points[i][3]
+                        j += 1
+                    k += 1
+
+            k = 0  # helps change order of path
+            for i in range(int(len(self.points) / self.num_angles)-1, 0, -1):
+                if (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                    if (k%4 == 0) or (k%4 == 3):
+                        self.points_edges[j][0] = self.points[i][0]
+                        self.points_edges[j][1] = self.points[i][1]
+                        self.points_edges[j][2] = -self.z_range/2
+                        self.points_edges[j][3] = self.points[i][3]
+                        j += 1
+                    k += 1
+
+            k = 0  # helps change order of path
+            # 2D edges path at minimum z position (out of magnet)
+            for i in range(int(len(self.points) / self.num_angles)):
+                if (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                    if (k%4 == 0) or (k%4 == 3):
+                        self.points_edges[j][0] = self.points[i][0]
+                        self.points_edges[j][1] = self.points[i][1]
+                        self.points_edges[j][2] = self.z_range/2
+                        self.points_edges[j][3] = self.points[i][3]
+                        j += 1
+                    k += 1
+
+            k = 0  # helps change order of path
+            for i in range(int(len(self.points) / self.num_angles)-1, 0, -1):
+                if (i==0) or (self.points[i][0] != self.points[i-1][0]) or (i==len(self.points)-1) or (self.points[i][0] != self.points[i+1][0]):
+                    if (k%4 == 0) or (k%4 == 3):
+                        self.points_edges[j][0] = self.points[i][0]
+                        self.points_edges[j][1] = self.points[i][1]
+                        self.points_edges[j][2] = self.z_range/2
+                        self.points_edges[j][3] = self.points[i][3]
+                        j += 1
+                    k += 1
+
+        print('\n*************** Path for moving around edges generated ************\n')
+
+    def estimate_time(self, wait_time):
         # Prints the estimated time
         with open(self.path_filename, 'r', encoding='UTF8', newline='') as f:
             reader = csv.reader(f)
-
             unit = 'seconds'
-            total_time = len(list(reader)) * (self.probe_stop_time_sec + 1)
+            total_time = len(list(reader)) * (wait_time + 1)
             if total_time >= 60:
                 total_time = total_time/60
                 unit = 'minutes'
@@ -271,24 +309,39 @@ class Points_Generator(Mapper):
                     total_time = total_time/60
                     unit = 'hours'
 
-            print('The current mapping sequence will take approximately %d %s. \n' % (total_time, unit))
+            total_time = "{:.1f}".format(total_time)
+            print('The current mapping sequence will take approximately %s %s. \n' % (total_time, unit))
+
+
+    # store them into a CSV file
+    def write_CSV(self, filename, points):
+        header = ['X', 'Y', 'Z', 'Rotation']
+        with open(filename, 'w', encoding='UTF8', newline='') as f:
+            f.truncate()
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(points)
+
 
     '''
     Functions to be accessed from outside 
     '''
     def run(self):
-        self.generate()
-        # Write path to CSV file
-        header = ['X', 'Y', 'Z', 'Rotation']
-        with open(self.path_filename, 'w', encoding='UTF8', newline='') as f:
-            f.truncate()
-            writer = csv.writer(f)
-            writer.writerow(header)
-            writer.writerows(self.points)
-            f.close()
-        print('\n*************** Path generation completed. ***************\n')
+        if self.shape == 'custom':
+            self.generate_custom()
+        elif self.shape == 'rectangular' or self.shape == 'cylinder':
+            self.generate()
+        else:
+            print('\nShape not recognized. Please change your configurations and try again.\n')
+        
+        # Generate full path
+        self.write_CSV(self.path_filename, self.points)
+        self.estimate_time(self.probe_stop_time_sec)
 
-        self.estimate_time()
+        # Generate edges path
+        self.generate_edges()
+        self.write_CSV(self.path_edges_filename, self.points)
+        self.estimate_time(1)
             
 
 
