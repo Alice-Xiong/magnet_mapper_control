@@ -1,6 +1,5 @@
 
 class Mapper():
-    config_changed = False
     config_dict = None
     profile = ""
     config_filename = ""

@@ -7,6 +7,7 @@ from zaber_motion.ascii import WarningFlags
 from zaber_motion.ascii import SettingConstants
 from csv import reader, writer
 from mapper_base import Mapper
+from mapper_datalogger import Datalogger
 import serial
 import re
 
@@ -37,6 +38,9 @@ class Controller (Mapper):
             self.collect_data = False
         else:
             self.collect_data = True
+
+        # datalogger instance
+        self.datalogger = Datalogger(self.data_filename, self.comm_port_probe)
 
        
     # Function to home the staegs
@@ -93,47 +97,12 @@ class Controller (Mapper):
         else:
             return True
 
-
     # Get warning flags
     def check_warnings(self):
         for dev in self.device_list:
             warning_flags = dev.warnings.get_flags()
             if len(warning_flags) > 0:
                 print(f"Device is stalling (or flag: {warning_flags})!")
-
-
-    # Collect data from serial port and write one line into the Excel sheet
-    def log_data(self, x, y, z, rot, in_bounds = True):
-        if not in_bounds:
-            data = [x, y, z, rot, 'out of motion bounds']
-            print(data)
-            csv_writer.writerow(data)
-            return
-
-        # configure the serial connections to the probe/Arduino
-        with serial.Serial(self.comm_port_probe, 9600, timeout=None) as ser:
-            while (True):
-                try:
-                    ser.readline() # do not keep the first or second probe reading
-                    ser.readline()
-                    field = ser.readline().decode('ascii').strip() # probe reading
-                    # use regular expression to check the field satisfies a certain value
-                    field_val = re.findall('-*[0-9]{1,2}\.[0-9]{2,4}', field)[0]
-                    field_unit = field[-1]
-                    data = [x, y, z, rot, field_val, field_unit]
-                    # print data to screen
-                    print(data)
-                    
-                    # if data seems correct, place it in csv file
-                    with open(self.data_filename, 'a', newline='') as write_obj:
-                        csv_writer = writer(write_obj)
-                        csv_writer.writerow(data)
-
-                    ser.flush()
-                    break
-
-                except Exception as e:
-                    pass
             
 
     def run_edges(self):

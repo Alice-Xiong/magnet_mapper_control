@@ -1,0 +1,7 @@
+data\_visualiser module
+=======================
+
+.. automodule:: data_visualiser
+   :members:
+   :undoc-members:
+   :show-inheritance:

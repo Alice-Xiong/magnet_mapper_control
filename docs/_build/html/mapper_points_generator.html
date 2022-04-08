@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mapper_points_generator module &mdash; Magnet Mapper Control Software 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mytheme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mapper_datalogger module" href="mapper_datalogger.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Magnet Mapper Control Software
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">List Python Classes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_base.html">mapper_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_config_setter.html">mapper_config_setter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_controller.html">mapper_controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_datalogger.html">mapper_datalogger module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">mapper_points_generator module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Magnet Mapper Control Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">List Python Classes</a> &raquo;</li>
+      <li>mapper_points_generator module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mapper_points_generator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mapper_points_generator">
+<span id="mapper-points-generator-module"></span><h1>mapper_points_generator module<a class="headerlink" href="#module-mapper_points_generator" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_points_generator.</span></span><span class="sig-name descname"><span class="pre">Points_Generator</span></span><a class="headerlink" href="#mapper_points_generator.Points_Generator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="mapper_base.html#mapper_base.Mapper" title="mapper_base.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">mapper_base.Mapper</span></code></a></p>
+<p>The Points_Generator class inherits Mapper. It instantiates an object for generated a point cloud in X,Y,Z, and rotation axis.
+The Config_Setter class should have already updated the config_dict variable in the Mapper object, this
+will get passed onto the Points_Generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Mapper</strong> – Mapper class that contains variables with key configurations.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an instance of the Points_Generator class.</p>
+<p>Loads configurations from the Mapper superclass – in particular, it contains ‘self.config_dict’ with key configurations.</p>
+<p>Checks for the shape from the configuration (<cite>self.config_dict[‘shape’]</cite> can be ‘cylinder’, ‘rectangular’, or ‘custom’).
+These shapes have their own associated configs.</p>
+<ul class="simple">
+<li><p>Cylinder:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 27%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>self.radius</cite></p></td>
+<td><p>‘radius’</p></td>
+<td><p>Radius of the circle in XY plane, in mm</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.xy_spacing</cite></p></td>
+<td><p>‘xy_spacing’</p></td>
+<td><p>Grid spacing for circle region in XY plane, in mm</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>self.rotation_points</cite></p></td>
+<td><p>‘rotation_points’</p></td>
+<td><p>A list of angles the probe will rotate to, in degrees</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Rectangular:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 27%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>self.x_range</cite></p></td>
+<td><p>‘x_range’</p></td>
+<td><p>Edge to edge distance in X direction in mm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.x_spacing</cite></p></td>
+<td><p>‘x_spacing’</p></td>
+<td><p>Grid spacing in X direction, in mm</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>self.y_range</cite></p></td>
+<td><p>‘y_range’</p></td>
+<td><p>Edge to edge distance in Y direction in mm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.y_spacing</cite></p></td>
+<td><p>‘y_spacing’</p></td>
+<td><p>Grid spacing in Y direction, in mm</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>self.rotation_points</cite></p></td>
+<td><p>‘rotation_points’</p></td>
+<td><p>A list of angles the probe will rotate to, in degrees</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Custom:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 24%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>self.custom_path_filename</cite></p></td>
+<td><p>‘custom_xyr_path_filename’</p></td>
+<td><p>Path to your custom path that specifies points in X, Y, and rotation.</p>
+<p>e.g. ‘path/path_custom_xyr.csv’</p>
+<p>Units: mm for X,Y and degrees for rotation.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>There are also configurations common to all path shapes:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 22%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>self.z_range</cite></p></td>
+<td><p>‘z_range’</p></td>
+<td><p>Edge to edge distance in Z direction in mm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.z_spacing</cite></p></td>
+<td><p>‘z_spacing’</p></td>
+<td><p>Grid spacing in Z direction, in mm</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>self.x_offset</cite></p></td>
+<td><p>‘x_offset’</p></td>
+<td><p>Position of X stage when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Console.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.y_offset</cite></p></td>
+<td><p>‘y_offset’</p></td>
+<td><p>Position of Y stage when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Console.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><cite>self.z_offset</cite></p></td>
+<td><p>‘z_offset’</p></td>
+<td><p>Position of Z stage when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Console.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.x_accel</cite></p></td>
+<td><p>‘x_accel’</p></td>
+<td><p>Maximum acceleration in X direction in mm/s^2</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>self.y_accel</cite></p></td>
+<td><p>‘y_accel’</p></td>
+<td><p>Maximum acceleration in Y direction in mm/s^2</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>self.z_accel</cite></p></td>
+<td><p>‘z_accel’</p></td>
+<td><p>Maximum acceleration in Z direction in mm/s^2</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.generate" title="Permalink to this definition"></a></dt>
+<dd><p>This function takes the configurations specified in <cite>__init__</cite> and converts it into a path.</p>
+<p><strong>Modifies</strong> self.points, where it stores the point cloud.</p>
+<p>The code calculates the points such that all points are centered around zero and contains zero. The endpoints are not contained in the
+path unless the spacing divides the range. The range is an edge to edge distance, but the radius (for cylinder only) accounts for half
+of the edge to edge distance.</p>
+<ul class="simple">
+<li><p>If <cite>x_range = 100</cite> and <cite>x_spacing = 50</cite>, the possible points in X will be -50, 0, 50.</p></li>
+<li><p>If <cite>x_range = 100</cite> and <cite>x_spacing = 40</cite>, the possible points in X will be -40, 0, 40.</p></li>
+<li><p>If <cite>radius = 100</cite> and <cite>x_spacing = 50</cite>, the possible points in X will be -100, -50, 0, 50, 100.</p></li>
+</ul>
+<p>The order of point changes follows Z –&gt; Y –&gt; X –&gt; rotation.</p>
+<ul class="simple">
+<li><p>For each point in XY plane, the mapper will move parallel to the probe in +Z direction from <cite>-self.z_range/2</cite> to <cite>self.z_range/2</cite>.</p></li>
+<li><p>Then it will move perpendicular to the probe to the next XY point, and then move in -Z direction, from <cite>self.z_range/2</cite> to <cite>-self.z_range/2</cite>.</p></li>
+<li><p>This is repeated until all the points in XY plane have been passed.</p></li>
+<li><p>Then the mapper rotates to the next point specified in <cite>self.rotation_points</cite> and repeats the sequence in XYZ space again.</p></li>
+</ul>
+<p>The code prints ‘Path generated for {self.shape} region’ after execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.generate_custom">
+<span class="sig-name descname"><span class="pre">generate_custom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.generate_custom" title="Permalink to this definition"></a></dt>
+<dd><p>This function takes a custome path file that contains points in X, Y, and rotation and converts to a full point cloud with X,Y,Z and rotation.</p>
+<p><strong>Modifies</strong> self.points, where it stores the point cloud.</p>
+<p>This function requires the shape to be custom and the path to the custom csv file given in <cite>self.custom_path_filename</cite>. The CSV should
+look like the following:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>X</p></th>
+<th class="head"><p>Y</p></th>
+<th class="head"><p>Rotation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>-50</p></td>
+<td><p>30</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>60</p></td>
+</tr>
+</tbody>
+</table>
+<p>The maximum and minimum X and Y values should be at most 500 apart, so as to not exceed travel bounds. The rotation stage should contain
+values between 0 to 180 degrees.</p>
+<p>The code prints ‘Path generated according to custom XYR path’ after execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.generate_edges">
+<span class="sig-name descname"><span class="pre">generate_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.generate_edges" title="Permalink to this definition"></a></dt>
+<dd><p>This function takes the points in <cite>self.points</cite> and generates a point cloud that represents the edges of the path. This
+allows the user to run the mapper only along the edges to verify no collision occurs.</p>
+<p><strong>Modifies</strong> <cite>self.points_edges</cite> where the edges path is stored.</p>
+<p>The detailed implementation is specific to the order of points.</p>
+<ul class="simple">
+<li><p>Recall they change in the order of Z –&gt; Y –&gt; X –&gt; rotation.</p></li>
+<li><p>The implementation may need to be updated if a different order is adopted in the future.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.estimate_time">
+<span class="sig-name descname"><span class="pre">estimate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.estimate_time" title="Permalink to this definition"></a></dt>
+<dd><p>This function estimates the amount of time until motion completion.
+It does not account for time for linear stages to travel. This is because typically we stop for 5 seconds at each point for probe and oscillations
+to settle, which is much longer than the time of travelling between points.</p>
+<p>The function takes in the time to stop at each point.</p>
+<ul class="simple">
+<li><p>For the full path, <cite>wait_time = self.probe_stop_time_sec</cite></p></li>
+<li><p>For edges path, <cite>wait_time = 1</cite> to get a fast verification</p></li>
+</ul>
+<p>The unit for time estimate will auto adjust to the largest unit, rounded to 1 decimal place. (e.g. 1.2 hours instead of 72 minutes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_filename</strong> (<em>string</em>) – path to file that contains the mapping path/point cloud</p></li>
+<li><p><strong>wait_time</strong> (<em>int/float</em>) – time to stop at each point in seconds</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.write_CSV">
+<span class="sig-name descname"><span class="pre">write_CSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.write_CSV" title="Permalink to this definition"></a></dt>
+<dd><p>This is a helper function that writes a list of points into the specified CSV file.</p>
+<p><strong>The CSV file must be closed and available for writing during execution.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>string</em>) – CSV file to save the points to, e.g. ‘path/path.csv’</p></li>
+<li><p><strong>points</strong> (<em>list</em>) – A list with 4 columns, each containing x, y, z, rotation data. This list is typically</p></li>
+<li><p><strong>self.points_edges.</strong> (<em>either self.points or</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.run" title="Permalink to this definition"></a></dt>
+<dd><p>This is the main function accessed from the outside.</p>
+<p>This function checks the shape from configurations and generates the associated path and edges path.
+It also writes the CSV files as specified by <cite>self.path_filename</cite> and <cite>self.path_edges_filename</cite>.
+At the end of execution, it provides the estimated time for both the full path and the edges path.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mapper_datalogger.html" class="btn btn-neutral float-left" title="mapper_datalogger module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, A. Xiong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
