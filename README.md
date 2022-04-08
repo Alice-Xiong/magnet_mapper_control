@@ -3,14 +3,17 @@ Zaber Motion Control Code
 
 Installation
 ------------
-### Windows
-
+Install python if you have not already. Additionally, install these libraries.
 ``` {.bash}
 # install the library (only needs to be done once)
 py -3 -m pip install --user zaber-motion
 py -3 -m pip install pySerial
 ```
 
+Next, clone this repository into a suitable location.
+``` {.bash}
+git clone https://github.com/Alice-Xiong/magnet_mapper_control.git {name of folder}
+```
 
 How to Run
 ----------
@@ -19,10 +22,10 @@ to view the serial port and establish connections.
 
 Run main.py as following:
 
-```
-# open command terminal in the directory where you loaded these files
+* Open command terminal in the directory where you loaded these files
+* The following command opens a user menu to change the profile and run the mapper. You can also open the 'config.json' file to change configs directly.
 
-# You can also open the 'config.json' file to change configs directly or run the command below to change settings.
+```
 py -3 main.py -c {config_filename} -p {profile_name}
 ```
 
@@ -33,7 +36,8 @@ Make sure to check device manager and change your serial ports to the ones used 
 Code Documentation 
 ------------------
 
-Site is still under construction. Some classes are not yet documented
+Site is still under construction. Some classes are not yet documented.
+
 https://alice-xiong.github.io/magnet_mapper_control/
 
 
