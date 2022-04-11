@@ -36,9 +36,11 @@ Make sure to check device manager and change your serial ports to the ones used 
 Code Documentation 
 ------------------
 
-Site is still under construction. Some classes are not yet documented.
+The following GitHub Pages site contains documentation to all classes in this project.
 
 https://alice-xiong.github.io/magnet_mapper_control/
+
+The project final report is also linked in the documentation webpage.
 
 
 
