@@ -5,9 +5,9 @@ import csv
 from mapper_base import Mapper
 
 class Points_Generator(Mapper):
-    """The Points_Generator class inherits Mapper. It instantiates an object for generated a point cloud in X,Y,Z, and rotation axis.
-    The Config_Setter class should have already updated the config_dict variable in the Mapper object, this 
-    will get passed onto the Points_Generator.
+    """The ``Points_Generator`` class inherits Mapper. It instantiates an object for generated a point cloud in X,Y,Z, and rotation axis.
+    The ``Config_Setter`` class should have already updated the config_dict variable in the Mapper object, this 
+    will get passed onto the ``Points_Generator``.
 
     Args:
         Mapper: Mapper class that contains variables with key configurations.
@@ -15,69 +15,79 @@ class Points_Generator(Mapper):
     
 
     def __init__(self):
-        """Creates an instance of the Points_Generator class.
+        """Creates an instance of the ``Points_Generator`` class.
 
-        Loads configurations from the Mapper superclass -- in particular, it contains 'self.config_dict' with key configurations.
+        Loads configurations from the ``Mapper`` superclass -- in particular, it contains ``self.config_dict`` with key configurations.
 
-        Checks for the shape from the configuration (`self.config_dict['shape']` can be 'cylinder', 'rectangular', or 'custom').
+        Checks for the shape from the configuration (``self.config_dict['shape']`` can be 'cylinder', 'rectangular', or 'custom').
         These shapes have their own associated configs.
+
+        * General configurations
+
+        ============================   ==============================    =============================================================
+        Variable name                  Related setting in config.json    Description
+        ============================   ==============================    =============================================================
+        ``self.path_filename``         'path_filename'                   Path to the CSV that stores the full mapping path
+        ``self.path_edges_filename``   'path_edges_filename'             Path to the CSV that stores the mapping path boundaries
+        ``self.shape``                 'shape'                           Shape of path, can be cylinder, rectangular, custom
+        ============================   ==============================    =============================================================
 
         * Cylinder:
 
-        ======================   ==============================    =============================================================
-        Variable name            Related setting in config.json    Description
-        ======================   ==============================    =============================================================
-        `self.radius`            'radius'                          Radius of the circle in XY plane, in mm  
-        `self.xy_spacing`        'xy_spacing'                      Grid spacing for circle region in XY plane, in mm
-        `self.rotation_points`   'rotation_points'                 A list of angles the probe will rotate to, in degrees
-        ======================   ==============================    =============================================================
+        ========================   ==============================    =============================================================
+        Variable name              Related setting in config.json    Description
+        ========================   ==============================    =============================================================
+        ``self.radius``            'radius'                          Radius of the circle in XY plane, in mm  
+        ``self.xy_spacing``        'xy_spacing'                      Grid spacing for circle region in XY plane, in mm
+        ``self.rotation_points``   'rotation_points'                 A list of angles the probe will rotate to, in degrees
+        ========================   ==============================    =============================================================
 
         * Rectangular:
 
-        ======================   ==============================    =============================================================
-        Variable name            Related setting in config.json    Description
-        ======================   ==============================    =============================================================
-        `self.x_range`           'x_range'                         Edge to edge distance in X direction in mm. 
-        `self.x_spacing`         'x_spacing'                       Grid spacing in X direction, in mm
-        `self.y_range`           'y_range'                         Edge to edge distance in Y direction in mm. 
-        `self.y_spacing`         'y_spacing'                       Grid spacing in Y direction, in mm
-        `self.rotation_points`   'rotation_points'                 A list of angles the probe will rotate to, in degrees
-        ======================   ==============================    =============================================================
+        ========================   ==============================    =============================================================
+        Variable name              Related setting in config.json    Description
+        ========================   ==============================    =============================================================
+        ``self.x_range``           'x_range'                         Edge to edge distance in X direction in mm. 
+        ``self.x_spacing``         'x_spacing'                       Grid spacing in X direction, in mm
+        ``self.y_range``           'y_range'                         Edge to edge distance in Y direction in mm. 
+        ``self.y_spacing``         'y_spacing'                       Grid spacing in Y direction, in mm
+        ``self.rotation_points``   'rotation_points'                 A list of angles the probe will rotate to, in degrees
+        ========================   ==============================    =============================================================
 
         * Custom:
 
-        ===========================   ==============================    =====================================================================
-        Variable name                 Related setting in config.json    Description
-        ===========================   ==============================    =====================================================================
-        `self.custom_path_filename`   'custom_xyr_path_filename'        Path to your custom path that specifies points in X, Y, and rotation.
+        =============================   ==============================    =====================================================================
+        Variable name                   Related setting in config.json    Description
+        =============================   ==============================    =====================================================================
+        ``self.custom_path_filename``   'custom_xyr_path_filename'        Path to your custom path that specifies points in X, Y, and rotation.
 
-                                                                        e.g. 'path/path_custom_xyr.csv' 
+                                                                          e.g. 'path/path_custom_xyr.csv' 
 
-                                                                        Units: mm for X,Y and degrees for rotation. 
-        ===========================   ==============================    =====================================================================
+                                                                          Units: mm for X,Y and degrees for rotation. 
+        =============================   ==============================    =====================================================================
 
         There are also configurations common to all path shapes:
 
         ======================   ==============================    =============================================================
         Variable name            Related setting in config.json    Description
         ======================   ==============================    =============================================================
-        `self.z_range`           'z_range'                         Edge to edge distance in Z direction in mm. 
-        `self.z_spacing`         'z_spacing'                       Grid spacing in Z direction, in mm
-        `self.x_offset`          'x_offset'                        Position of X stage when the tip of the probe is aligned to center of magnet in mm. 
+        ``self.z_range``           'z_range'                       Edge to edge distance in Z direction in mm. 
+        ``self.z_spacing``         'z_spacing'                     Grid spacing in Z direction, in mm
+        ``self.x_offset``          'x_offset'                      Position of X stage when the tip of the probe is aligned to center of magnet in mm. 
         
                                                                    This is read from Zaber Console.
 
-        `self.y_offset`          'y_offset'                        Position of Y stage when the tip of the probe is aligned to center of magnet in mm. 
+        ``self.y_offset``          'y_offset'                      Position of Y stage when the tip of the probe is aligned to center of magnet in mm. 
         
                                                                    This is read from Zaber Console.
         
-        `self.z_offset`          'z_offset'                        Position of Z stage when the tip of the probe is aligned to center of magnet in mm. 
+        ``self.z_offset``          'z_offset'                      Position of Z stage when the tip of the probe is aligned to center of magnet in mm. 
         
                                                                    This is read from Zaber Console.
  
-        `self.x_accel`           'x_accel'                         Maximum acceleration in X direction in mm/s^2
-        `self.y_accel`           'y_accel'                         Maximum acceleration in Y direction in mm/s^2
-        `self.z_accel`           'z_accel'                         Maximum acceleration in Z direction in mm/s^2
+        ``self.x_accel``           'x_accel'                       Maximum acceleration in X direction in mm/s^2
+        ``self.y_accel``           'y_accel'                       Maximum acceleration in Y direction in mm/s^2
+        ``self.z_accel``           'z_accel'                       Maximum acceleration in Z direction in mm/s^2
         ======================   ==============================    =============================================================
 
         """
@@ -117,7 +127,7 @@ class Points_Generator(Mapper):
         
 
     def generate(self):
-        """This function takes the configurations specified in `__init__` and converts it into a path.
+        """This function takes the configurations specified in ``__init__`` and converts it into a path.
 
         **Modifies** self.points, where it stores the point cloud.
 
@@ -322,10 +332,10 @@ class Points_Generator(Mapper):
 
 
     def generate_edges(self): 
-        """This function takes the points in `self.points` and generates a point cloud that represents the edges of the path. This 
+        """This function takes the points in ``self.points`` and generates a point cloud that represents the edges of the path. This 
         allows the user to run the mapper only along the edges to verify no collision occurs.
 
-        **Modifies** `self.points_edges` where the edges path is stored.
+        **Modifies** ``self.points_edges`` where the edges path is stored.
 
         The detailed implementation is specific to the order of points.
         
@@ -428,8 +438,8 @@ class Points_Generator(Mapper):
 
         The function takes in the time to stop at each point.
 
-        * For the full path, `wait_time = self.probe_stop_time_sec` 
-        * For edges path, `wait_time = 1` to get a fast verification
+        * For the full path, ``wait_time = self.probe_stop_time_sec`` 
+        * For edges path, ``wait_time = 1`` to get a fast verification
 
         The unit for time estimate will auto adjust to the largest unit, rounded to 1 decimal place. (e.g. 1.2 hours instead of 72 minutes).
 
@@ -462,8 +472,7 @@ class Points_Generator(Mapper):
 
         Args:
             filename (string): CSV file to save the points to, e.g. 'path/path.csv'
-            points (list): A list with 4 columns, each containing x, y, z, rotation data. This list is typically 
-            either `self.points` or `self.points_edges`.
+            points (list): A list with 4 columns, each containing x, y, z, rotation data. This list is typically either `self.points` or `self.points_edges`.
         """
         header = ['X', 'Y', 'Z', 'Rotation']
         with open(filename, 'w', encoding='UTF8', newline='') as f:
@@ -478,7 +487,7 @@ class Points_Generator(Mapper):
         """This is the main function accessed from the outside.
 
         This function checks the shape from configurations and generates the associated path and edges path. 
-        It also writes the CSV files as specified by `self.path_filename` and `self.path_edges_filename`.
+        It also writes the CSV files as specified by ``self.path_filename`` and ``self.path_edges_filename``.
         At the end of execution, it provides the estimated time for both the full path and the edges path.
         """
         if self.shape == 'custom':

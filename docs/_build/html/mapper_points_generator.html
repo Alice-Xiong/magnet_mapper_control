@@ -81,9 +81,9 @@
 <dt class="sig sig-object py" id="mapper_points_generator.Points_Generator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_points_generator.</span></span><span class="sig-name descname"><span class="pre">Points_Generator</span></span><a class="headerlink" href="#mapper_points_generator.Points_Generator" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="mapper_base.html#mapper_base.Mapper" title="mapper_base.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">mapper_base.Mapper</span></code></a></p>
-<p>The Points_Generator class inherits Mapper. It instantiates an object for generated a point cloud in X,Y,Z, and rotation axis.
-The Config_Setter class should have already updated the config_dict variable in the Mapper object, this
-will get passed onto the Points_Generator.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> class inherits Mapper. It instantiates an object for generated a point cloud in X,Y,Z, and rotation axis.
+The <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class should have already updated the config_dict variable in the Mapper object, this
+will get passed onto the <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>Mapper</strong> – Mapper class that contains variables with key configurations.</p>
@@ -92,18 +92,18 @@ will get passed onto the Points_Generator.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Creates an instance of the Points_Generator class.</p>
-<p>Loads configurations from the Mapper superclass – in particular, it contains ‘self.config_dict’ with key configurations.</p>
-<p>Checks for the shape from the configuration (<cite>self.config_dict[‘shape’]</cite> can be ‘cylinder’, ‘rectangular’, or ‘custom’).
+<dd><p>Creates an instance of the <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> class.</p>
+<p>Loads configurations from the <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> superclass – in particular, it contains <code class="docutils literal notranslate"><span class="pre">self.config_dict</span></code> with key configurations.</p>
+<p>Checks for the shape from the configuration (<code class="docutils literal notranslate"><span class="pre">self.config_dict['shape']</span></code> can be ‘cylinder’, ‘rectangular’, or ‘custom’).
 These shapes have their own associated configs.</p>
 <ul class="simple">
-<li><p>Cylinder:</p></li>
+<li><p>General configurations</p></li>
 </ul>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 19%" />
-<col style="width: 27%" />
-<col style="width: 54%" />
+<col style="width: 24%" />
+<col style="width: 25%" />
+<col style="width: 51%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable name</p></th>
@@ -112,15 +112,45 @@ These shapes have their own associated configs.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><cite>self.radius</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.path_filename</span></code></p></td>
+<td><p>‘path_filename’</p></td>
+<td><p>Path to the CSV that stores the full mapping path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.path_edges_filename</span></code></p></td>
+<td><p>‘path_edges_filename’</p></td>
+<td><p>Path to the CSV that stores the mapping path boundaries</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.shape</span></code></p></td>
+<td><p>‘shape’</p></td>
+<td><p>Shape of path, can be cylinder, rectangular, custom</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Cylinder:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 26%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.radius</span></code></p></td>
 <td><p>‘radius’</p></td>
 <td><p>Radius of the circle in XY plane, in mm</p></td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.xy_spacing</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.xy_spacing</span></code></p></td>
 <td><p>‘xy_spacing’</p></td>
 <td><p>Grid spacing for circle region in XY plane, in mm</p></td>
 </tr>
-<tr class="row-even"><td><p><cite>self.rotation_points</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.rotation_points</span></code></p></td>
 <td><p>‘rotation_points’</p></td>
 <td><p>A list of angles the probe will rotate to, in degrees</p></td>
 </tr>
@@ -131,9 +161,9 @@ These shapes have their own associated configs.</p>
 </ul>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 19%" />
-<col style="width: 27%" />
-<col style="width: 54%" />
+<col style="width: 21%" />
+<col style="width: 26%" />
+<col style="width: 53%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable name</p></th>
@@ -142,23 +172,23 @@ These shapes have their own associated configs.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><cite>self.x_range</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.x_range</span></code></p></td>
 <td><p>‘x_range’</p></td>
 <td><p>Edge to edge distance in X direction in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.x_spacing</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.x_spacing</span></code></p></td>
 <td><p>‘x_spacing’</p></td>
 <td><p>Grid spacing in X direction, in mm</p></td>
 </tr>
-<tr class="row-even"><td><p><cite>self.y_range</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.y_range</span></code></p></td>
 <td><p>‘y_range’</p></td>
 <td><p>Edge to edge distance in Y direction in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.y_spacing</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.y_spacing</span></code></p></td>
 <td><p>‘y_spacing’</p></td>
 <td><p>Grid spacing in Y direction, in mm</p></td>
 </tr>
-<tr class="row-even"><td><p><cite>self.rotation_points</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.rotation_points</span></code></p></td>
 <td><p>‘rotation_points’</p></td>
 <td><p>A list of angles the probe will rotate to, in degrees</p></td>
 </tr>
@@ -169,9 +199,9 @@ These shapes have their own associated configs.</p>
 </ul>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 21%" />
-<col style="width: 24%" />
-<col style="width: 55%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 54%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable name</p></th>
@@ -180,7 +210,7 @@ These shapes have their own associated configs.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><cite>self.custom_path_filename</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.custom_path_filename</span></code></p></td>
 <td><p>‘custom_xyr_path_filename’</p></td>
 <td><p>Path to your custom path that specifies points in X, Y, and rotation.</p>
 <p>e.g. ‘path/path_custom_xyr.csv’</p>
@@ -203,41 +233,41 @@ These shapes have their own associated configs.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><cite>self.z_range</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.z_range</span></code></p></td>
 <td><p>‘z_range’</p></td>
 <td><p>Edge to edge distance in Z direction in mm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.z_spacing</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.z_spacing</span></code></p></td>
 <td><p>‘z_spacing’</p></td>
 <td><p>Grid spacing in Z direction, in mm</p></td>
 </tr>
-<tr class="row-even"><td><p><cite>self.x_offset</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.x_offset</span></code></p></td>
 <td><p>‘x_offset’</p></td>
 <td><p>Position of X stage when the tip of the probe is aligned to center of magnet in mm.</p>
 <p>This is read from Zaber Console.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.y_offset</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.y_offset</span></code></p></td>
 <td><p>‘y_offset’</p></td>
 <td><p>Position of Y stage when the tip of the probe is aligned to center of magnet in mm.</p>
 <p>This is read from Zaber Console.</p>
 </td>
 </tr>
-<tr class="row-even"><td><p><cite>self.z_offset</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.z_offset</span></code></p></td>
 <td><p>‘z_offset’</p></td>
 <td><p>Position of Z stage when the tip of the probe is aligned to center of magnet in mm.</p>
 <p>This is read from Zaber Console.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.x_accel</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.x_accel</span></code></p></td>
 <td><p>‘x_accel’</p></td>
 <td><p>Maximum acceleration in X direction in mm/s^2</p></td>
 </tr>
-<tr class="row-even"><td><p><cite>self.y_accel</cite></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.y_accel</span></code></p></td>
 <td><p>‘y_accel’</p></td>
 <td><p>Maximum acceleration in Y direction in mm/s^2</p></td>
 </tr>
-<tr class="row-odd"><td><p><cite>self.z_accel</cite></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.z_accel</span></code></p></td>
 <td><p>‘z_accel’</p></td>
 <td><p>Maximum acceleration in Z direction in mm/s^2</p></td>
 </tr>
@@ -248,7 +278,7 @@ These shapes have their own associated configs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.generate">
 <span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.generate" title="Permalink to this definition"></a></dt>
-<dd><p>This function takes the configurations specified in <cite>__init__</cite> and converts it into a path.</p>
+<dd><p>This function takes the configurations specified in <code class="docutils literal notranslate"><span class="pre">__init__</span></code> and converts it into a path.</p>
 <p><strong>Modifies</strong> self.points, where it stores the point cloud.</p>
 <p>The code calculates the points such that all points are centered around zero and contains zero. The endpoints are not contained in the
 path unless the spacing divides the range. The range is an edge to edge distance, but the radius (for cylinder only) accounts for half
@@ -306,9 +336,9 @@ values between 0 to 180 degrees.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_points_generator.Points_Generator.generate_edges">
 <span class="sig-name descname"><span class="pre">generate_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.generate_edges" title="Permalink to this definition"></a></dt>
-<dd><p>This function takes the points in <cite>self.points</cite> and generates a point cloud that represents the edges of the path. This
+<dd><p>This function takes the points in <code class="docutils literal notranslate"><span class="pre">self.points</span></code> and generates a point cloud that represents the edges of the path. This
 allows the user to run the mapper only along the edges to verify no collision occurs.</p>
-<p><strong>Modifies</strong> <cite>self.points_edges</cite> where the edges path is stored.</p>
+<p><strong>Modifies</strong> <code class="docutils literal notranslate"><span class="pre">self.points_edges</span></code> where the edges path is stored.</p>
 <p>The detailed implementation is specific to the order of points.</p>
 <ul class="simple">
 <li><p>Recall they change in the order of Z –&gt; Y –&gt; X –&gt; rotation.</p></li>
@@ -324,8 +354,8 @@ It does not account for time for linear stages to travel. This is because typica
 to settle, which is much longer than the time of travelling between points.</p>
 <p>The function takes in the time to stop at each point.</p>
 <ul class="simple">
-<li><p>For the full path, <cite>wait_time = self.probe_stop_time_sec</cite></p></li>
-<li><p>For edges path, <cite>wait_time = 1</cite> to get a fast verification</p></li>
+<li><p>For the full path, <code class="docutils literal notranslate"><span class="pre">wait_time</span> <span class="pre">=</span> <span class="pre">self.probe_stop_time_sec</span></code></p></li>
+<li><p>For edges path, <code class="docutils literal notranslate"><span class="pre">wait_time</span> <span class="pre">=</span> <span class="pre">1</span></code> to get a fast verification</p></li>
 </ul>
 <p>The unit for time estimate will auto adjust to the largest unit, rounded to 1 decimal place. (e.g. 1.2 hours instead of 72 minutes).</p>
 <dl class="field-list simple">
@@ -347,8 +377,7 @@ to settle, which is much longer than the time of travelling between points.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>string</em>) – CSV file to save the points to, e.g. ‘path/path.csv’</p></li>
-<li><p><strong>points</strong> (<em>list</em>) – A list with 4 columns, each containing x, y, z, rotation data. This list is typically</p></li>
-<li><p><strong>self.points_edges.</strong> (<em>either self.points or</em>) – </p></li>
+<li><p><strong>points</strong> (<em>list</em>) – A list with 4 columns, each containing x, y, z, rotation data. This list is typically either <cite>self.points</cite> or <cite>self.points_edges</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -359,7 +388,7 @@ to settle, which is much longer than the time of travelling between points.</p>
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_points_generator.Points_Generator.run" title="Permalink to this definition"></a></dt>
 <dd><p>This is the main function accessed from the outside.</p>
 <p>This function checks the shape from configurations and generates the associated path and edges path.
-It also writes the CSV files as specified by <cite>self.path_filename</cite> and <cite>self.path_edges_filename</cite>.
+It also writes the CSV files as specified by <code class="docutils literal notranslate"><span class="pre">self.path_filename</span></code> and <code class="docutils literal notranslate"><span class="pre">self.path_edges_filename</span></code>.
 At the end of execution, it provides the estimated time for both the full path and the edges path.</p>
 </dd></dl>
 

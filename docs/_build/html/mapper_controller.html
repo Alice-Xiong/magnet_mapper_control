@@ -82,10 +82,137 @@
 <dt class="sig sig-object py" id="mapper_controller.Controller">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_controller.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><a class="headerlink" href="#mapper_controller.Controller" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="mapper_base.html#mapper_base.Mapper" title="mapper_base.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">mapper_base.Mapper</span></code></a></p>
+<p>The Controller class inherits <code class="docutils literal notranslate"><span class="pre">Mapper</span></code>. This class contains functions that home and move the Zaber stages.
+The Controller class assumes that configuration setting and path generation have already been completed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Mapper</strong> – Mapper class that contains variables with key configurations.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Creates an instance of the Controller class.</p>
+<p>Loads configurations from the Mapper superclass – in particular, it contains <code class="docutils literal notranslate"><span class="pre">self.config_dict</span></code> with key configurations.</p>
+<p>Information about the settings in code:</p>
+<ul class="simple">
+<li><p>General configurations:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 25%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.path_filename</span></code></p></td>
+<td><p>‘path_filename’</p></td>
+<td><p>Path to the CSV that stores the full mapping path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.path_edges_filename</span></code></p></td>
+<td><p>‘path_edges_filename’</p></td>
+<td><p>Path to the CSV that stores the mapping path boundaries</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.data_filename</span></code></p></td>
+<td><p>‘data_filename’</p></td>
+<td><p>Path to CSV that stores mapping data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.comm_port_zaber</span></code></p></td>
+<td><p>‘comm_port_zaber’</p></td>
+<td><p>COMM port that connects to Zaber device</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.comm_port_probe</span></code></p></td>
+<td><p>‘comm_port_probe’</p></td>
+<td><p>COMM port that connects to the probe/Arduino interface</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Motion related configurations:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 21%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.x_offset</span></code></p></td>
+<td><p>‘x_offset’</p></td>
+<td><p>Position of X stage (float) when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Launcher.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.y_offset</span></code></p></td>
+<td><p>‘y_offset’</p></td>
+<td><p>Position of Y stage (float) when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Launcher.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.z_offset</span></code></p></td>
+<td><p>‘z_offset’</p></td>
+<td><p>Position of Z stage (float) when the tip of the probe is aligned to center of magnet in mm.</p>
+<p>This is read from Zaber Launcher.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.max_accelX</span></code></p></td>
+<td><p>‘x_accel’</p></td>
+<td><p>Maximum acceleration of the X direction stage in mm/s^2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.max_accelY</span></code></p></td>
+<td><p>‘y_accel’</p></td>
+<td><p>Maximum acceleration of the Y direction stage in mm/s^2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.max_accelZ</span></code></p></td>
+<td><p>‘z_accel’</p></td>
+<td><p>Maximum acceleration of the Z direction stage in mm/s^2</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Data collection related configurations:</p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 26%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable name</p></th>
+<th class="head"><p>Related setting in config.json</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">self.probe_stop_time</span></code></p></td>
+<td><p>‘probe_stop_time_sec’</p></td>
+<td><p>Time probe pauses at each spot in seconds (float value)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">self.collect_data</span></code></p></td>
+<td><p>‘collect_data’</p></td>
+<td><blockquote>
+<div><p>True if probe is installed and taking data</p>
+</div></blockquote>
+<p>False if you do not wish to take data</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The class also instantiates a <code class="docutils literal notranslate"><span class="pre">datalogger</span></code> class on startup. The datalogger class is based on the COMM ports and data path specified.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.home">
@@ -95,18 +222,42 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.moveXYZR">
 <span class="sig-name descname"><span class="pre">moveXYZR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitXYZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitR</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.moveXYZR" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Move the linear stages according to the position and rotation values given. The positions given are absolute.</p>
+<p>This function converts mapper/magnet coordinates (i.e. with (0,0,0) at the center of magnet) to Zaber stages
+coordinates (i.e. with (0,0,0) at the edges of each stage).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">axis.wait_until_idle()</span></code> command blocks until motion on this axis is complete. Currently, we have the X,Y,rotation
+stages moving together, blocking the funtion, and Z stage only moves after the other three motions have completed.
+This order of movements helps avoid collision with the magnet surface while moving into position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xval</strong> (<em>float/int</em>) – targeted position on X axis in mapper coordinates</p></li>
+<li><p><strong>Yval</strong> (<em>float/int</em>) – targeted position on Y axis in mapper coordinates</p></li>
+<li><p><strong>Zval</strong> (<em>float/int</em>) – targeted position on Z axis in mapper coordinates</p></li>
+<li><p><strong>angle</strong> (<em>float/int</em>) – targeted position on rotation stage</p></li>
+<li><p><strong>unitXYZ</strong> (<em>Units</em>) – unit for linear motion, must be a Zaber Units type, e.g. Units.LENGTH_MILLIMETRES</p></li>
+<li><p><strong>unitR</strong> (<em>Units</em>) – unit for rotational motion, must be a Zaber Units type, e.g. Units.ANGLE_DEGREES</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.verify_bounds">
 <span class="sig-name descname"><span class="pre">verify_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.verify_bounds" title="Permalink to this definition"></a></dt>
-<dd><p>Verify whether the commanded position is within range of motion</p>
+<dd><p>Verify whether the commanded position is within range of motion. The bounds are:</p>
+<ul class="simple">
+<li><p>1000 mm for X</p></li>
+<li><p>500 mm for Y</p></li>
+<li><p>500 mm for Z</p></li>
+<li><p>0 to 360 degrees for rotation</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Xval</strong> (<em>int</em>) – Commanded position in X direction in mm (magnet coordinates)</p></li>
-<li><p><strong>Yval</strong> (<em>int</em>) – Commanded position in Y direction in mm (magnet coordinates)</p></li>
-<li><p><strong>Zval</strong> (<em>int</em>) – Commanded position in Z direction in mm (magnet coordinates)</p></li>
+<li><p><strong>Xval</strong> (<em>int/float</em>) – Commanded position in X direction in mm (magnet coordinates)</p></li>
+<li><p><strong>Yval</strong> (<em>int/float</em>) – Commanded position in Y direction in mm (magnet coordinates)</p></li>
+<li><p><strong>Zval</strong> (<em>int/float</em>) – Commanded position in Z direction in mm (magnet coordinates)</p></li>
 <li><p><strong>angle</strong> (<em>float</em>) – Commanded angle in degrees</p></li>
 </ul>
 </dd>
@@ -122,17 +273,33 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.check_warnings">
 <span class="sig-name descname"><span class="pre">check_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.check_warnings" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks for Zaber warning flags across all Zaber devices and prints them to user console.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.run_edges">
 <span class="sig-name descname"><span class="pre">run_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.run_edges" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>This function runs the mapper through the edges of the mapping path.</p>
+<p>This function will require connection to Zaber stages. It does not home any stages automatically. The acceleration will
+be limited to that of <code class="docutils literal notranslate"><span class="pre">self.max_accelX</span></code>, <code class="docutils literal notranslate"><span class="pre">self.max_accelY</span></code>, <code class="docutils literal notranslate"><span class="pre">self.max_accelZ</span></code> respectively.</p>
+<p>This function will also be reading the CSV filespecified in <code class="docutils literal notranslate"><span class="pre">self.points_edges</span></code>, which contains the edges path. The program
+will pause and give an error if the CSV file is accessed by other processes.</p>
+<p>When running the edges path, 1 second of damping time is used. This time is currently not configurable. It is chosen so the
+mapper can move quickly through all points on the edges. No data is taken and connection to the probe is not required.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_controller.Controller.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_controller.Controller.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>This function runs the mapper through the full mapping path.</p>
+<p>This function will require connection to Zaber stages. It does not home any stages automatically. The acceleration will
+be limited to that of <code class="docutils literal notranslate"><span class="pre">self.max_accelX</span></code>, <code class="docutils literal notranslate"><span class="pre">self.max_accelY</span></code>, <code class="docutils literal notranslate"><span class="pre">self.max_accelZ</span></code> respectively.</p>
+<p>This function will also be reading the CSV file whose name is give by <code class="docutils literal notranslate"><span class="pre">self.points</span></code>, which contains the mapping path. The program
+will pause and give an error if the CSV file is accessed by other processes.</p>
+<p>This functions calls <code class="docutils literal notranslate"><span class="pre">self.moveXYZR</span></code> and moves to every point specified in the CSV file. At each step, X,Y,Rotation movements occur
+simultaneously, followed by separate Z direction motion. Due to the path setup, Z direction motion is maximized, X,Y, and rotation motions
+are minimized. To change this order, make changes in the <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> class.</p>
+</dd></dl>
 
 </dd></dl>
 

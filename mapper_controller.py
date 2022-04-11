@@ -12,8 +12,67 @@ import serial
 import re
 
 class Controller (Mapper):
+    """The Controller class inherits ``Mapper``. This class contains functions that home and move the Zaber stages.
+    The Controller class assumes that configuration setting and path generation have already been completed.
+
+    Args:
+        Mapper: Mapper class that contains variables with key configurations.
+    """
     def __init__(self): 
+        """Creates an instance of the Controller class.
+
+        Loads configurations from the Mapper superclass -- in particular, it contains ``self.config_dict`` with key configurations.
+
+        Information about the settings in code:
+
+        * General configurations:
+
+        ============================   ==============================    =============================================================
+        Variable name                  Related setting in config.json    Description
+        ============================   ==============================    =============================================================
+        ``self.path_filename``         'path_filename'                   Path to the CSV that stores the full mapping path
+        ``self.path_edges_filename``   'path_edges_filename'             Path to the CSV that stores the mapping path boundaries
+        ``self.data_filename``         'data_filename'                   Path to CSV that stores mapping data
+        ``self.comm_port_zaber``       'comm_port_zaber'                 COMM port that connects to Zaber device
+        ``self.comm_port_probe``       'comm_port_probe'                 COMM port that connects to the probe/Arduino interface
+        ============================   ==============================    =============================================================
+
+        * Motion related configurations:
+
+        ========================   ==============================    =============================================================
+        Variable name              Related setting in config.json    Description
+        ========================   ==============================    =============================================================
+        ``self.x_offset``          'x_offset'                        Position of X stage (float) when the tip of the probe is aligned to center of magnet in mm. 
+        
+                                                                     This is read from Zaber Launcher.
+
+        ``self.y_offset``          'y_offset'                        Position of Y stage (float) when the tip of the probe is aligned to center of magnet in mm. 
+        
+                                                                     This is read from Zaber Launcher.
+        
+        ``self.z_offset``          'z_offset'                        Position of Z stage (float) when the tip of the probe is aligned to center of magnet in mm. 
+        
+                                                                     This is read from Zaber Launcher.
+ 
+        ``self.max_accelX``        'x_accel'                         Maximum acceleration of the X direction stage in mm/s^2
+        ``self.max_accelY``        'y_accel'                         Maximum acceleration of the Y direction stage in mm/s^2
+        ``self.max_accelZ``        'z_accel'                         Maximum acceleration of the Z direction stage in mm/s^2
+        ========================   ==============================    =============================================================
+        
+        * Data collection related configurations:
+
+        =========================   ==============================    =============================================================
+        Variable name               Related setting in config.json    Description
+        =========================   ==============================    =============================================================
+        ``self.probe_stop_time``      'probe_stop_time_sec'             Time probe pauses at each spot in seconds (float value)
+        ``self.collect_data``         'collect_data'                    True if probe is installed and taking data
+                                                                      False if you do not wish to take data
+        =========================   ==============================    =============================================================
+
+        The class also instantiates a ``datalogger`` class on startup. The datalogger class is based on the COMM ports and data path specified.
+        """
         super().__init__
+        # general configurations
         self.config_dict = Mapper.config_dict
         self.path_filename = self.config_dict['path_filename']
         self.path_edges_filename = self.config_dict['path_edges_filename']
@@ -27,12 +86,12 @@ class Controller (Mapper):
         self.z_offset = self.config_dict['z_offset']
 
         # xyz stage settings
-        self.probe_stop_time = self.config_dict['probe_stop_time_sec']
         self.max_accelX = self.config_dict['x_accel']
         self.max_accelY = self.config_dict['y_accel']
         self.max_accelZ = self.config_dict['z_accel']
 
         # data collection
+        self.probe_stop_time = self.config_dict['probe_stop_time_sec']
         if self.config_dict['collect_data'][0] == 'F' or self.config_dict['collect_data'][0] == 'f':
             self.collect_data = False
         else:
@@ -59,6 +118,23 @@ class Controller (Mapper):
 
     # Function for moving in XYZ
     def moveXYZR(self, Xval, Yval, Zval, angle, unitXYZ, unitR):
+        """Move the linear stages according to the position and rotation values given. The positions given are absolute.
+
+        This function converts mapper/magnet coordinates (i.e. with (0,0,0) at the center of magnet) to Zaber stages 
+        coordinates (i.e. with (0,0,0) at the edges of each stage). 
+
+        The ``axis.wait_until_idle()`` command blocks until motion on this axis is complete. Currently, we have the X,Y,rotation 
+        stages moving together, blocking the funtion, and Z stage only moves after the other three motions have completed.
+        This order of movements helps avoid collision with the magnet surface while moving into position.
+
+        Args:
+            Xval (float/int): targeted position on X axis in mapper coordinates
+            Yval (float/int): targeted position on Y axis in mapper coordinates
+            Zval (float/int): targeted position on Z axis in mapper coordinates
+            angle (float/int): targeted position on rotation stage 
+            unitXYZ (Units): unit for linear motion, must be a Zaber Units type, e.g. Units.LENGTH_MILLIMETRES
+            unitR (Units): unit for rotational motion, must be a Zaber Units type, e.g. Units.ANGLE_DEGREES
+        """
         self.axisX.move_absolute(self.x_offset + Xval, unitXYZ, wait_until_idle=False)
         # Y axis is vertical stage. Since our motor is mount at the top of the stage, a smaller commanded position 
         # corresponds to a higher position, we thus subtract the commanded position instead of adding it to the y offset
@@ -74,12 +150,17 @@ class Controller (Mapper):
 
 
     def verify_bounds(self, Xval, Yval, Zval, angle):
-        """Verify whether the commanded position is within range of motion
+        """Verify whether the commanded position is within range of motion. The bounds are:
+
+        * 1000 mm for X
+        * 500 mm for Y
+        * 500 mm for Z
+        * 0 to 360 degrees for rotation
 
         Args:
-            Xval (int): Commanded position in X direction in mm (magnet coordinates)
-            Yval (int): Commanded position in Y direction in mm (magnet coordinates)
-            Zval (int): Commanded position in Z direction in mm (magnet coordinates)
+            Xval (int/float): Commanded position in X direction in mm (magnet coordinates)
+            Yval (int/float): Commanded position in Y direction in mm (magnet coordinates)
+            Zval (int/float): Commanded position in Z direction in mm (magnet coordinates)
             angle (float): Commanded angle in degrees
 
         Returns:
@@ -98,6 +179,8 @@ class Controller (Mapper):
 
     # Get warning flags
     def check_warnings(self):
+        """Checks for Zaber warning flags across all Zaber devices and prints them to user console.
+        """
         for dev in self.device_list:
             warning_flags = dev.warnings.get_flags()
             if len(warning_flags) > 0:
@@ -105,6 +188,17 @@ class Controller (Mapper):
             
 
     def run_edges(self):
+        """This function runs the mapper through the edges of the mapping path. 
+
+        This function will require connection to Zaber stages. It does not home any stages automatically. The acceleration will 
+        be limited to that of ``self.max_accelX``, ``self.max_accelY``, ``self.max_accelZ`` respectively. 
+
+        This function will also be reading the CSV filespecified in ``self.points_edges``, which contains the edges path. The program 
+        will pause and give an error if the CSV file is accessed by other processes.
+
+        When running the edges path, 1 second of damping time is used. This time is currently not configurable. It is chosen so the 
+        mapper can move quickly through all points on the edges. No data is taken and connection to the probe is not required.
+        """
         Library.enable_device_db_store()
 
         with Connection.open_serial_port(self.comm_port_zaber) as connection:
@@ -112,9 +206,9 @@ class Controller (Mapper):
             self.device_list = connection.detect_devices()
 
             # initialize structures for devices and axis
-            deviceX = self.device_list[1] # parallel to magnet, horizontal, second stage
-            deviceY = self.device_list[2] # parallel to magnet, vertical, third stage
-            deviceZ = self.device_list[0] # orthogonal to magnet, first stage
+            deviceX = self.device_list[1] # transverse horizontal, second stage
+            deviceY = self.device_list[2] # transverse vertical, third stage
+            deviceZ = self.device_list[0] # parallel to beamline, first stage
             deviceR = self.device_list[3] # last rotation stage
 
             self.axisX = deviceX.get_axis(1)
@@ -122,7 +216,7 @@ class Controller (Mapper):
             self.axisZ = deviceZ.get_axis(1)
             self.axisR = deviceR.get_axis(1)
 
-            # set max velocity in each direction
+            # set max acceleration in each direction
             deviceX.settings.set('accel', self.max_accelX, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
             deviceY.settings.set('accel', self.max_accelY, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
             deviceZ.settings.set('accel', self.max_accelZ, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
@@ -146,6 +240,19 @@ class Controller (Mapper):
 
     # Main function to be accessed outside
     def run(self):
+        """This function runs the mapper through the full mapping path.
+
+        This function will require connection to Zaber stages. It does not home any stages automatically. The acceleration will 
+        be limited to that of ``self.max_accelX``, ``self.max_accelY``, ``self.max_accelZ`` respectively. 
+
+        This function will also be reading the CSV file whose name is give by ``self.points``, which contains the mapping path. The program 
+        will pause and give an error if the CSV file is accessed by other processes.
+
+        This functions calls ``self.moveXYZR`` and moves to every point specified in the CSV file. At each step, X,Y,Rotation movements occur 
+        simultaneously, followed by separate Z direction motion. Due to the path setup, Z direction motion is maximized, X,Y, and rotation motions 
+        are minimized. To change this order, make changes in the ``Points_Generator`` class.
+
+        """
         # Reading from a CSV file and moving the gantry
         # Initialize all stages
         Library.enable_device_db_store()

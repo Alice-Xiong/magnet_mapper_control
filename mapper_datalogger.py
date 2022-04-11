@@ -30,7 +30,7 @@ class Datalogger():
 
         To reduce chance of corrupted data:
 
-        * Regular expression '-*[0-9]{1,2}\.[0-9]{2,4}' is used to check that the probe data reading contains 1-2 digits followed by a decimal point, followed by 2-4 digits.
+        * Regular expression ``-*[0-9]{1,5}\.[0-9]{2,4}`` is used to check that the probe data reading contains 1-2 digits followed by a decimal point, followed by 2-4 digits.
         
         * The first two readings after opening the COMM port is dropped. The third one (at the same location) is recorded.
 

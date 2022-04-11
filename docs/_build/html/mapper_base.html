@@ -82,14 +82,11 @@
 <dt class="sig sig-object py" id="mapper_base.Mapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_base.</span></span><span class="sig-name descname"><span class="pre">Mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_base.Mapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Contains key variables such as filenames and dictionary for configurations that will be shared with all classes.</p>
+<p>Defaults of the class variables are found below.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mapper_base.Mapper.config_dict">
 <span class="sig-name descname"><span class="pre">config_dict</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mapper_base.Mapper.config_dict" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="mapper_base.Mapper.profile">
-<span class="sig-name descname"><span class="pre">profile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#mapper_base.Mapper.profile" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -97,15 +94,25 @@
 <span class="sig-name descname"><span class="pre">config_filename</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#mapper_base.Mapper.config_filename" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="mapper_base.Mapper.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_base.Mapper.__init__" title="Permalink to this definition"></a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mapper_base.Mapper.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#mapper_base.Mapper.profile" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mapper_base.Mapper.stop">
-<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_base.Mapper.stop" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="mapper_base.Mapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_base.Mapper.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an instance of the <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> class.</p>
+<p>The two arguments will be used to update the class variables <code class="docutils literal notranslate"><span class="pre">config_filename</span></code> and <code class="docutils literal notranslate"><span class="pre">profile</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_filename</strong> (<em>string</em>) – name of the config JSON file, e.g. “config.json”</p></li>
+<li><p><strong>profile_name</strong> (<em>_type_</em>) – name of the profile within the config JSON file, e.g. “custom”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

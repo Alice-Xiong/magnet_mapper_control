@@ -82,20 +82,66 @@
 <dt class="sig sig-object py" id="mapper_config_setter.Config_Setter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_config_setter.</span></span><span class="sig-name descname"><span class="pre">Config_Setter</span></span><a class="headerlink" href="#mapper_config_setter.Config_Setter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="mapper_base.html#mapper_base.Mapper" title="mapper_base.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">mapper_base.Mapper</span></code></a></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class inherits <code class="docutils literal notranslate"><span class="pre">Mapper</span></code>. This class contains functions to interface with JSON
+files and convert them into a dictionary with configuration name as the key and configuration value as the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Mapper</strong> – Mapper class that contains variables with key configurations.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_config_setter.Config_Setter.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_config_setter.Config_Setter.__init__" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Creates an instance of the <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class.</p>
+<p>Gets the <code class="docutils literal notranslate"><span class="pre">Mapper.config_dict</span></code> from the Mapper superclass. The <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class will modify <code class="docutils literal notranslate"><span class="pre">Mapper.config_dict</span></code>.
+Other classes, such as <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">Controller</span></code> will load the updated configurations from <code class="docutils literal notranslate"><span class="pre">Mapper.config_dict</span></code>.</p>
+<p>This class will read the contents of the JSON file (name given by <code class="docutils literal notranslate"><span class="pre">Mapper.config_filename</span></code>) and load it into a dictionary.
+The JSON file should be available for reading. Any changes made to the JSON file will take effect the next time a
+<code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> instance is created.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_config_setter.Config_Setter.update_json">
 <span class="sig-name descname"><span class="pre">update_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_config_setter.Config_Setter.update_json" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Helper function that updates the JSON file with the information in <code class="docutils literal notranslate"><span class="pre">self.json_load[self.profile]</span></code>.</p>
+<p>This function will only updates the one profile selected by <code class="docutils literal notranslate"><span class="pre">self.profile</span></code>, all other profiles will remain unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – name of the JSON file, e.g. “config.json”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mapper_config_setter.Config_Setter.verify_bounds">
+<span class="sig-name descname"><span class="pre">verify_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_config_setter.Config_Setter.verify_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>This function checks the shape of the path. If the shape is rectangular or cylinder,
+it proceeds to check all X, Y, Z, rotation settings to be within limits of travel.</p>
+<p>This function gives a warning so that the user can change the configurations if necessary,
+however, it will not enforce the points to be within limits of the stages.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mapper_config_setter.Config_Setter.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapper_config_setter.Config_Setter.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Displays the available configurations and its current value with a number in front. E.g.</p>
+<p>1) X_range = 200</p>
+<p>The user can enter the number in front (1) to change the setting.</p>
+<p>This function allows for editting values in a passed dictionary, in a generic way, not having to know ahead of time the name and type of
+each setting. Accepted types for this function are:</p>
+<ul class="simple">
+<li><p>Integer</p></li>
+<li><p>Float</p></li>
+<li><p>String</p></li>
+<li><p>Comma separated list of integers, floats, or strings (assumes all items in the list are the same type)</p></li>
+<li><p>Boolean</p></li>
+</ul>
+<p>The type for each configuration is the same as its type in the JSON file. That is, 1 will be recognized as an integer,
+1.0 will be recognized as a float.</p>
+<p>This function also calls <code class="docutils literal notranslate"><span class="pre">self.verify_bounds</span></code>.</p>
+<p>After changing some configuration, the user will be asked to save. They have the option to save to the same file,
+a new file, or not save. A warning will be given if the file is not saved.</p>
+</dd></dl>
 
 </dd></dl>
 
