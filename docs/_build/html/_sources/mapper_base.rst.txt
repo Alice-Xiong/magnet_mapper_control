@@ -1,4 +1,4 @@
-mapper\_base module
+Mapper Class
 ===================
 
 .. automodule:: mapper_base

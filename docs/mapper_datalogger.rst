@@ -1,4 +1,4 @@
-mapper\_datalogger module
+Datalogger Class
 =========================
 
 .. automodule:: mapper_datalogger

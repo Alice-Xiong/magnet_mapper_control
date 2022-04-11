@@ -1,5 +1,5 @@
-List Python Classes
-====
+List of Python Classes
+======================
 
 .. toctree::
    :maxdepth: 4

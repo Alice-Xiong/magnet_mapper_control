@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mapper_config_setter module &mdash; Magnet Mapper Control Software 1.0 documentation</title>
+  <title>Config_Setter Class &mdash; Magnet Mapper Control Software 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/mytheme.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="mapper_controller module" href="mapper_controller.html" />
-    <link rel="prev" title="mapper_base module" href="mapper_base.html" /> 
+    <link rel="next" title="Controller Class" href="mapper_controller.html" />
+    <link rel="prev" title="Mapper Class" href="mapper_base.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,15 +40,16 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">List Python Classes</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_base.html">mapper_base module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">mapper_config_setter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_controller.html">mapper_controller module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_datalogger.html">mapper_datalogger module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_points_generator.html">mapper_points_generator module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">List of Python Classes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_base.html">Mapper Class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Config_Setter Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_controller.html">Controller Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_datalogger.html">Datalogger Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_points_generator.html">Points_Generator Class</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="file_structure.html">File Structure</a></li>
 </ul>
 
         </div>
@@ -65,8 +66,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="modules.html">List Python Classes</a> &raquo;</li>
-      <li>mapper_config_setter module</li>
+          <li><a href="modules.html">List of Python Classes</a> &raquo;</li>
+      <li>Config_Setter Class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/mapper_config_setter.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -77,10 +78,10 @@
            <div itemprop="articleBody">
              
   <section id="module-mapper_config_setter">
-<span id="mapper-config-setter-module"></span><h1>mapper_config_setter module<a class="headerlink" href="#module-mapper_config_setter" title="Permalink to this headline"></a></h1>
+<span id="config-setter-class"></span><h1>Config_Setter Class<a class="headerlink" href="#module-mapper_config_setter" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="mapper_config_setter.Config_Setter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_config_setter.</span></span><span class="sig-name descname"><span class="pre">Config_Setter</span></span><a class="headerlink" href="#mapper_config_setter.Config_Setter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config_Setter</span></span><a class="headerlink" href="#mapper_config_setter.Config_Setter" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="mapper_base.html#mapper_base.Mapper" title="mapper_base.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">mapper_base.Mapper</span></code></a></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class inherits <code class="docutils literal notranslate"><span class="pre">Mapper</span></code>. This class contains functions to interface with JSON
 files and convert them into a dictionary with configuration name as the key and configuration value as the value.</p>
@@ -151,8 +152,8 @@ a new file, or not save. A warning will be given if the file is not saved.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="mapper_base.html" class="btn btn-neutral float-left" title="mapper_base module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="mapper_controller.html" class="btn btn-neutral float-right" title="mapper_controller module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mapper_base.html" class="btn btn-neutral float-left" title="Mapper Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mapper_controller.html" class="btn btn-neutral float-right" title="Controller Class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,4 +1,4 @@
-mapper\_config\_setter module
+Config\_Setter Class
 =============================
 
 .. automodule:: mapper_config_setter

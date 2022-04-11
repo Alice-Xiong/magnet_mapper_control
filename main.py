@@ -67,35 +67,44 @@ def main(argv):
     3) Run mapper along edges of mapping path
     4) Start mapper in full mapping path
 
+    The user can also quit the program by pressing Q. 
+
     Each of these options bring the user to a different program:
 
     **Change configurations**
 
-    Creates a new instance of the ``Config_Setter`` class and allows the user 
-    to change any configurations with the user interface.
+        Creates a new instance of the ``Config_Setter`` class and allows the user 
+        to change any configurations with the user interface.
     
-    Afterwards, creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
-    the edges path.
+        Afterwards, creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
+        the edges path.
 
-    The program asks the user whether they want to change more configurations before exiting back to the main menu.
+        The program asks the user whether they want to change more configurations before exiting back to the main menu.
 
     **Generate path for mapping and for edges**
 
-    Creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
-    the edges path. 
+        Creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
+        the edges path. 
     
-    Note that this option should be run whenever configurations are directly changed in the 
-    JSON file. If using option 0\) of the menu, no need to run this option.
+        Note that this option should be run whenever configurations are directly changed in the 
+        JSON file. If using option 0\) of the menu, no need to run this option.
 
     **Home the mapper**
 
-    Homes the mapper as the name suggests. This will home all axes -- it is recommended to home after a long 
-    time of inactivity to avoid drift.
+        Homes the mapper as the name suggests. This will home all axes -- it is recommended to home after a long 
+        time of inactivity to avoid drift. See ``Controller`` class and ``home()`` function for more details.
 
     **Run mapper along edges of mapping path**
 
-    Regenerates the edges path in case it has not been generated already and then moves the mapper along the 
-    edges path. 
+        Regenerates the edges path in case it has not been generated already and then moves the mapper along the edges path. 
+
+        Creates a new instance of the ``Controller`` object to ensure all configuration changes are captured and runs its ``run_edges()`` function.
+
+    **Start mapper in full mapping path**
+
+        Starts moving the mapper in full mapping path and taking data.
+
+        Creates a new instance of the ``Controller`` object to ensure all configuration changes are captured and runs its ``run()`` function.
     """
     # Get filenames
     config_file, profile_name = init(argv)

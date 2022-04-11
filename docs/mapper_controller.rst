@@ -1,4 +1,4 @@
-mapper\_controller module
+Controller Class
 =========================
 
 .. automodule:: mapper_controller

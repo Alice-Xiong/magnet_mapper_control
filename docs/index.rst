@@ -6,17 +6,24 @@
 Welcome to Magnet Mapper Control Software's documentation!
 ==========================================================
 
+.. image:: media/mapper.png
+  :width: 700
+  :alt: CAD of our Magnet Mapper with Associated Coordinate System
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
    
    modules
+   file_structure
 
 
 
-Indices and tables
-==================
+For additional information, please find our project report below. 
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Project final report :download:`pdf <media/report.pdf>`
+
+* Appendix 10.2 Zaber Launcher User Guide
+* Appendix 10.3 Mapper Control Software
+
+

@@ -1,4 +1,4 @@
-mapper\_points\_generator module
+Points\_Generator Class
 ================================
 
 .. automodule:: mapper_points_generator

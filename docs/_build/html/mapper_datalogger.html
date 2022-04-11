@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mapper_datalogger module &mdash; Magnet Mapper Control Software 1.0 documentation</title>
+  <title>Datalogger Class &mdash; Magnet Mapper Control Software 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/mytheme.css" type="text/css" />
@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="mapper_points_generator module" href="mapper_points_generator.html" />
-    <link rel="prev" title="mapper_controller module" href="mapper_controller.html" /> 
+    <link rel="next" title="Points_Generator Class" href="mapper_points_generator.html" />
+    <link rel="prev" title="Controller Class" href="mapper_controller.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,15 +40,16 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">List Python Classes</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_base.html">mapper_base module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_config_setter.html">mapper_config_setter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_controller.html">mapper_controller module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">mapper_datalogger module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mapper_points_generator.html">mapper_points_generator module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">List of Python Classes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_base.html">Mapper Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_config_setter.html">Config_Setter Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_controller.html">Controller Class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Datalogger Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapper_points_generator.html">Points_Generator Class</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="file_structure.html">File Structure</a></li>
 </ul>
 
         </div>
@@ -65,8 +66,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="modules.html">List Python Classes</a> &raquo;</li>
-      <li>mapper_datalogger module</li>
+          <li><a href="modules.html">List of Python Classes</a> &raquo;</li>
+      <li>Datalogger Class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/mapper_datalogger.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -77,10 +78,10 @@
            <div itemprop="articleBody">
              
   <section id="module-mapper_datalogger">
-<span id="mapper-datalogger-module"></span><h1>mapper_datalogger module<a class="headerlink" href="#module-mapper_datalogger" title="Permalink to this headline"></a></h1>
+<span id="datalogger-class"></span><h1>Datalogger Class<a class="headerlink" href="#module-mapper_datalogger" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="mapper_datalogger.Datalogger">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mapper_datalogger.</span></span><span class="sig-name descname"><span class="pre">Datalogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comm_port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_datalogger.Datalogger" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Datalogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comm_port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mapper_datalogger.Datalogger" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The Datalogger class interfaces with the Arduino and reads serial data from the Teslameter. This class
 will likely need to be changed if the RS232 interface is used instead. This class is mainly called by functions
@@ -132,8 +133,8 @@ in mapper_controller.Controller (ie the functions that run the stages) to make m
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="mapper_controller.html" class="btn btn-neutral float-left" title="mapper_controller module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="mapper_points_generator.html" class="btn btn-neutral float-right" title="mapper_points_generator module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mapper_controller.html" class="btn btn-neutral float-left" title="Controller Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mapper_points_generator.html" class="btn btn-neutral float-right" title="Points_Generator Class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
