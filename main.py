@@ -11,6 +11,20 @@ import sys, getopt
 
 
 def init(argv):
+    """Checks the arguments when running main.py.
+
+    Extracts the ``config_name`` from the '-c' argument. If not found, defaults to ``config_file = 'config.json'``
+
+    Extracts the ``profile_name`` from the '-p' argument. If not found, defaults to ``profile = 'test_rectangular'``
+
+    The ``config_name`` and ``profile_name`` are printed to terminal.
+
+    Args:
+        argv: list of arguments when starting the program
+
+    Returns:
+        (string, string): name of the config JSON file, name of the profile in config JSON file
+    """
     config_file = 'config.json'
     profile_name = 'test_rectangular'
 
@@ -36,6 +50,53 @@ def init(argv):
     
 
 def main(argv):
+    """This is the main loop and menu of the program. 
+
+    Args:
+        argv: list of arguments when starting the program
+
+    On startup, calls ``init()`` and obtains the ``config_file`` and ``profile_name``. This information is then 
+    used to instantiate ``Mapper`` object. As well, ``Config_Setter``, ``Points_Generator``, ``Controller`` are 
+    all instantiated. These objects may be updated or recreated throughout the main loop.
+
+    The user is then brought to a menu that contains five options:
+
+    0) Change configurations
+    1) Generate path for mapping and for edges
+    2) Home the mapper
+    3) Run mapper along edges of mapping path
+    4) Start mapper in full mapping path
+
+    Each of these options bring the user to a different program:
+
+    **Change configurations**
+
+    Creates a new instance of the ``Config_Setter`` class and allows the user 
+    to change any configurations with the user interface.
+    
+    Afterwards, creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
+    the edges path.
+
+    The program asks the user whether they want to change more configurations before exiting back to the main menu.
+
+    **Generate path for mapping and for edges**
+
+    Creates a new instance of ``Points_Generator`` and generates both the full mapping path and 
+    the edges path. 
+    
+    Note that this option should be run whenever configurations are directly changed in the 
+    JSON file. If using option 0\) of the menu, no need to run this option.
+
+    **Home the mapper**
+
+    Homes the mapper as the name suggests. This will home all axes -- it is recommended to home after a long 
+    time of inactivity to avoid drift.
+
+    **Run mapper along edges of mapping path**
+
+    Regenerates the edges path in case it has not been generated already and then moves the mapper along the 
+    edges path. 
+    """
     # Get filenames
     config_file, profile_name = init(argv)
 

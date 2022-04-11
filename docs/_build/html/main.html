@@ -81,12 +81,62 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="main.init">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.init" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks the arguments when running main.py.</p>
+<p>Extracts the <code class="docutils literal notranslate"><span class="pre">config_name</span></code> from the ‘-c’ argument. If not found, defaults to <code class="docutils literal notranslate"><span class="pre">config_file</span> <span class="pre">=</span> <span class="pre">'config.json'</span></code></p>
+<p>Extracts the <code class="docutils literal notranslate"><span class="pre">profile_name</span></code> from the ‘-p’ argument. If not found, defaults to <code class="docutils literal notranslate"><span class="pre">profile</span> <span class="pre">=</span> <span class="pre">'test_rectangular'</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">config_name</span></code> and <code class="docutils literal notranslate"><span class="pre">profile_name</span></code> are printed to terminal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>argv</strong> – list of arguments when starting the program</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>name of the config JSON file, name of the profile in config JSON file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(string, string)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.main">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.main" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>This is the main loop and menu of the program.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>argv</strong> – list of arguments when starting the program</p>
+</dd>
+</dl>
+<p>On startup, calls <code class="docutils literal notranslate"><span class="pre">init()</span></code> and obtains the <code class="docutils literal notranslate"><span class="pre">config_file</span></code> and <code class="docutils literal notranslate"><span class="pre">profile_name</span></code>. This information is then
+used to instantiate <code class="docutils literal notranslate"><span class="pre">Mapper</span></code> object. As well, <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code>, <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code>, <code class="docutils literal notranslate"><span class="pre">Controller</span></code> are
+all instantiated. These objects may be updated or recreated throughout the main loop.</p>
+<p>The user is then brought to a menu that contains five options:</p>
+<ol class="arabic simple" start="0">
+<li><p>Change configurations</p></li>
+<li><p>Generate path for mapping and for edges</p></li>
+<li><p>Home the mapper</p></li>
+<li><p>Run mapper along edges of mapping path</p></li>
+<li><p>Start mapper in full mapping path</p></li>
+</ol>
+<p>Each of these options bring the user to a different program:</p>
+<p><strong>Change configurations</strong></p>
+<p>Creates a new instance of the <code class="docutils literal notranslate"><span class="pre">Config_Setter</span></code> class and allows the user
+to change any configurations with the user interface.</p>
+<p>Afterwards, creates a new instance of <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> and generates both the full mapping path and
+the edges path.</p>
+<p>The program asks the user whether they want to change more configurations before exiting back to the main menu.</p>
+<p><strong>Generate path for mapping and for edges</strong></p>
+<p>Creates a new instance of <code class="docutils literal notranslate"><span class="pre">Points_Generator</span></code> and generates both the full mapping path and
+the edges path.</p>
+<p>Note that this option should be run whenever configurations are directly changed in the
+JSON file. If using option 0) of the menu, no need to run this option.</p>
+<p><strong>Home the mapper</strong></p>
+<p>Homes the mapper as the name suggests. This will home all axes – it is recommended to home after a long
+time of inactivity to avoid drift.</p>
+<p><strong>Run mapper along edges of mapping path</strong></p>
+<p>Regenerates the edges path in case it has not been generated already and then moves the mapper along the
+edges path.</p>
+</dd></dl>
 
 </section>
 
